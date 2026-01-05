@@ -9,6 +9,7 @@ import {
     Trophy,
     User,
     LogOut,
+    Shield,
 } from 'lucide-react';
 import { getSupabase } from '@/lib/supabase';
 
@@ -16,26 +17,45 @@ interface SidebarProps {
     className?: string;
 }
 
-const navigation = [
-    {
-        name: 'Dashboard',
-        href: '/dashboard',
-        icon: LayoutDashboard,
-    },
-    {
-        name: 'Leaderboard',
-        href: '/leaderboard',
-        icon: Trophy,
-    },
-    {
-        name: 'Profile',
-        href: '/profile',
-        icon: User,
-    },
-];
-
 export function Sidebar({ className }: SidebarProps) {
     const pathname = usePathname();
+    const [isAdmin, setIsAdmin] = React.useState(false);
+
+    React.useEffect(() => {
+        const checkAdmin = async () => {
+            const supabase = getSupabase();
+            const { data: { session } } = await supabase.auth.getSession();
+            const user = session?.user;
+            const adminEmails = ['dannywchen3@gmail.com', 'dannywchenofficial@gmail.com'];
+            if (user?.email && adminEmails.includes(user.email)) {
+                setIsAdmin(true);
+            }
+        };
+        checkAdmin();
+    }, []);
+
+    const navigation = [
+        {
+            name: 'Dashboard',
+            href: '/dashboard',
+            icon: LayoutDashboard,
+        },
+        {
+            name: 'Leaderboard',
+            href: '/leaderboard',
+            icon: Trophy,
+        },
+        {
+            name: 'Profile',
+            href: '/profile',
+            icon: User,
+        },
+        ...(isAdmin ? [{
+            name: 'Admin',
+            href: '/admin',
+            icon: Shield,
+        }] : []),
+    ];
 
     return (
         <div

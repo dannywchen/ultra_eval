@@ -21,19 +21,25 @@ import {
     Mail
 } from 'lucide-react';
 import { getSupabase, Student, Report } from '@/lib/supabase';
+import { uploadFile } from '@/lib/storage';
 import { cn } from '@/lib/utils';
+import { Paperclip, FileIcon, Trash } from 'lucide-react';
 
 export default function DashboardPage() {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('accomplishment');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+    const [isUploading, setIsUploading] = useState(false);
 
     const formatAnalysis = (text: string) => {
         if (!text) return ["No analysis provided."];
-        // Split by major sections: Impact, Productivity, Quality, Relevance or existing newlines
+        // Split by major sections or newlines and strip "Part X:" or "Compliment:" prefixes
         const sections = text.split(/(?=Impact \d: |Productivity \d: |Quality \d: |Relevance \d: |To improve)/g);
-        return sections.map(s => s.trim()).filter(Boolean);
+        return sections
+            .map(s => s.trim().replace(/^(Part \d:|Compliment:)\s*/i, ''))
+            .filter(Boolean);
     };
     const [showModal, setShowModal] = useState(false);
     const [evaluationResult, setEvaluationResult] = useState<any>(null);
@@ -45,6 +51,7 @@ export default function DashboardPage() {
     const [loading, setLoading] = useState(true);
     const [showShareModal, setShowShareModal] = useState(false);
     const [shareData, setShareData] = useState<Report | null>(null);
+    const [visibleCount, setVisibleCount] = useState(5);
 
     useEffect(() => {
         fetchDashboardData();
@@ -91,15 +98,38 @@ export default function DashboardPage() {
         setEvaluationResult(null);
 
         try {
+            // 1. Upload files first
+            const fileUrls: string[] = [];
+            if (selectedFiles.length > 0) {
+                setIsUploading(true);
+                for (const file of selectedFiles) {
+                    try {
+                        const url = await uploadFile(file);
+                        fileUrls.push(url);
+                    } catch (err) {
+                        console.error('File upload failed:', err);
+                    }
+                }
+                setIsUploading(false);
+            }
+
+            // 2. Submit report with file URLs
             const response = await fetch('/api/submit-report', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, description, category, studentId: student.id }),
+                body: JSON.stringify({
+                    title,
+                    description,
+                    category,
+                    studentId: student.id,
+                    fileUrls: fileUrls
+                }),
             });
             const data = await response.json();
             if (data.success) {
                 setEvaluationResult(data.evaluation);
                 fetchDashboardData();
+                setSelectedFiles([]);
             }
         } catch (error) {
             console.error(error);
@@ -195,7 +225,7 @@ export default function DashboardPage() {
                                     Your accomplishments will appear here. Start by submitting one!
                                 </div>
                             ) : (
-                                reports.slice(0, 5).map((report, i) => (
+                                reports.slice(0, visibleCount).map((report, i) => (
                                     <div
                                         key={report.id}
                                         onClick={() => setSelectedReport(report)}
@@ -213,6 +243,15 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                 ))
+                            )}
+
+                            {reports.length > visibleCount && (
+                                <button
+                                    onClick={() => setVisibleCount(prev => prev + 5)}
+                                    className="w-full py-4 border border-dashed border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest text-zinc-600 hover:text-white hover:bg-white/5 transition-all"
+                                >
+                                    View More Activities
+                                </button>
                             )}
                         </div>
                     </div>
@@ -332,11 +371,49 @@ export default function DashboardPage() {
                                                     <div className="space-y-2">
                                                         <textarea
                                                             placeholder="Explain what you did and why it matters..."
-                                                            className="w-full h-40 bg-white/5 rounded-2xl p-6 text-lg font-medium placeholder:text-zinc-800 outline-none border-none focus:ring-1 focus:ring-white/10 transition-all resize-y"
+                                                            className="w-full h-40 bg-white/5 rounded-2xl p-6 text-lg font-medium placeholder:text-zinc-800 outline-none border-none focus:ring-1 focus:ring-white/10 transition-colors resize-y"
                                                             value={description}
                                                             onChange={(e) => setDescription(e.target.value)}
                                                             required
                                                         />
+                                                    </div>
+
+                                                    <div className="space-y-4">
+                                                        <div className="flex items-center justify-between">
+                                                            <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Supporting Evidence</label>
+                                                            <span className="text-[10px] text-zinc-800">Images or Documents</span>
+                                                        </div>
+
+                                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                                            {selectedFiles.map((file, idx) => (
+                                                                <div key={idx} className="relative group aspect-square rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+                                                                    <FileIcon className="h-6 w-6 text-zinc-700 mb-1" />
+                                                                    <span className="text-[8px] font-bold text-zinc-500 truncate w-full px-2">{file.name}</span>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setSelectedFiles(selectedFiles.filter((_, i) => i !== idx))}
+                                                                        className="absolute inset-0 bg-red-500/80 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all"
+                                                                    >
+                                                                        <Trash className="h-4 w-4 text-white" />
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+
+                                                            <label className="aspect-square rounded-2xl border-2 border-dashed border-white/5 hover:border-white/20 hover:bg-white/5 transition-all flex flex-col items-center justify-center cursor-pointer group">
+                                                                <Paperclip className="h-6 w-6 text-zinc-700 group-hover:text-white transition-colors" />
+                                                                <span className="text-[8px] font-bold text-zinc-700 group-hover:text-zinc-400 mt-2 uppercase tracking-widest">Add Asset</span>
+                                                                <input
+                                                                    type="file"
+                                                                    multiple
+                                                                    className="hidden"
+                                                                    onChange={(e) => {
+                                                                        if (e.target.files) {
+                                                                            setSelectedFiles([...selectedFiles, ...Array.from(e.target.files)]);
+                                                                        }
+                                                                    }}
+                                                                />
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
 

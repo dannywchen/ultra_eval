@@ -1,14 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { evaluateReport, generateEmailResponse } from '@/lib/openai';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { Resend } from 'resend';
-
-// Initialize Resend only if API key is present to avoid crashing
-const getResendClient = () => {
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) return null;
-    return new Resend(apiKey);
-};
+import { sendGmail } from '@/lib/gmail';
 
 export async function POST(request: NextRequest) {
     try {
@@ -40,6 +33,25 @@ export async function POST(request: NextRequest) {
         }
 
         // Evaluate the report using OpenAI
+        // The prompt for evaluateReport is defined internally in '@/lib/openai'
+        // and is expected to produce a JSON object like this:
+        /*
+        {
+            "elo_awarded": <number 0-100>,
+            "feedback": "<concise summary of results>",
+            "analysis_parts": [
+                "<Specific insight about the achievement (DO NOT prefix with 'Part 1' or 'Insight')>",
+                "<Breakdown of the impact and complexity (DO NOT prefix with 'Part 2' or 'Breakdown')>",
+                "<Professional encouragement and path forward (DO NOT prefix with 'Part 3', 'Compliment', or 'Encouragement')>"
+            ],
+            "category_score": {
+                "impact": <number 0-10>,
+                "productivity": <number 0-10>,
+                "quality": <number 0-10>,
+                "relevance": <number 0-10>
+            }
+        } (Ensure no em dashes, no italics, and NO LABEL PREFIXES like 'Part 1:', 'Compliment:', etc. in the text fields)
+        */
         const evaluation = await evaluateReport(
             title,
             description,
@@ -86,22 +98,27 @@ export async function POST(request: NextRequest) {
             console.error('Error updating student ELO:', updateError);
         }
 
-        // Send real email using Resend
-        // Send email only if client is available
+        // Send real email using Gmail API
         try {
-            const resendClient = getResendClient();
-            if (resendClient && student.email) {
-                await resendClient.emails.send({
-                    from: 'Ultra Eval <notifications@ultraeval.com>',
+            if (student.email) {
+                const subject = `Ultra has evaluated your submission!`;
+                const html = generateEmailResponse(student.name, title, evaluation);
+
+                console.log('Dispatching Gmail via App Password...', { to: student.email });
+                const gmailResult = await sendGmail({
                     to: student.email,
-                    subject: `+${evaluation.elo_awarded} ELO: "${title}" Graded`,
-                    html: generateEmailResponse(student.name, title, evaluation),
+                    subject,
+                    html
                 });
-            } else {
-                console.warn('Resend client or student email missing. Email skipped.');
+
+                if (!gmailResult.success) {
+                    console.error('Gmail API Error:', gmailResult.error);
+                } else {
+                    console.log('Gmail sent successfully:', gmailResult.messageId);
+                }
             }
         } catch (emailError) {
-            console.error('Failed to send email:', emailError);
+            console.error('Gmail automation failed:', emailError);
         }
 
         return NextResponse.json({
