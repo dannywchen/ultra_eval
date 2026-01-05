@@ -26,10 +26,10 @@ export default function Home() {
             Ultra<span className="text-[10px] ml-1 bg-white text-black px-2 py-0.5 rounded-full uppercase">eval</span>
           </Link>
           <div className="flex items-center gap-6">
-            <Link href="/leaderboard" className="hidden md:block text-sm font-bold text-zinc-500 hover:text-white transition-colors">Leaderboard</Link>
-            <Link href="/login" className="text-sm font-bold text-zinc-500 hover:text-white transition-colors">Sign In</Link>
+            <Link href="/leaderboard" className="hidden md:block text-sm font-semibold text-zinc-500 hover:text-white transition-colors">Leaderboard</Link>
+            <Link href="/login" className="text-sm font-semibold text-zinc-500 hover:text-white transition-colors">Sign In</Link>
             <Link href="/login">
-              <button className="btn-sleek btn-sleek-primary px-6 py-2.5 text-sm">Get Started</button>
+              <button className="btn-3d btn-3d-primary px-6 py-2 text-sm">Get Started</button>
             </Link>
           </div>
         </div>
@@ -69,12 +69,12 @@ export default function Home() {
           className="mt-12 flex flex-col sm:flex-row items-center gap-4"
         >
           <Link href="/login">
-            <button className="btn-sleek btn-sleek-primary px-10 py-5 text-xl group">
+            <button className="btn-3d btn-3d-primary px-10 py-5 text-xl group">
               Start Evaluation <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </Link>
           <Link href="/leaderboard">
-            <button className="btn-sleek btn-sleek-dark px-10 py-5 text-xl">View Leaderboard</button>
+            <button className="btn-3d btn-3d-dark px-10 py-5 text-xl">View Leaderboard</button>
           </Link>
         </motion.div>
       </section>
@@ -148,7 +148,7 @@ export default function Home() {
           Join the protocol for high-achieving humans. Your impact deserves to be measured.
         </p>
         <Link href="/login">
-          <button className="btn-sleek btn-sleek-primary px-12 py-6 text-2xl group shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+          <button className="btn-3d btn-3d-primary px-12 py-6 text-2xl group shadow-[0_0_50px_rgba(255,255,255,0.05)]">
             Initialize Profile
           </button>
         </Link>

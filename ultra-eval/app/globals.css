@@ -88,7 +88,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.01em;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -98,38 +98,56 @@
   h4,
   h5,
   h6 {
-    font-weight: 700;
-    letter-spacing: -0.05em;
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
 }
 
 @layer components {
 
-  /* Sleek Bubbly Buttons */
-  .btn-sleek {
-    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-bold transition-all duration-200 active:scale-95 disabled:opacity-50;
+  /* 3D Sleek Buttons */
+  .btn-3d {
+    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-medium transition-all duration-150 active:translate-y-0.5 disabled:opacity-50;
   }
 
-  .btn-sleek-primary {
-    @apply bg-white text-black hover:bg-zinc-300;
+  .btn-3d-primary {
+    @apply bg-white text-black;
+    box-shadow: 0 4px 0 #e4e4e7;
   }
 
-  .btn-sleek-dark {
-    @apply bg-zinc-900 text-white hover:bg-zinc-800 border border-white/10;
+  .btn-3d-primary:hover {
+    @apply bg-zinc-200;
   }
 
-  .btn-sleek-ghost {
-    @apply text-white hover:bg-white/10;
+  .btn-3d-primary:active {
+    box-shadow: 0 1px 0 #e4e4e7;
+  }
+
+  .btn-3d-dark {
+    @apply bg-zinc-900 text-white border border-white/5;
+    box-shadow: 0 4px 0 #000000;
+  }
+
+  .btn-3d-dark:hover {
+    @apply bg-zinc-800;
+  }
+
+  .btn-3d-dark:active {
+    box-shadow: 0 1px 0 #000000;
+  }
+
+  .btn-3d-ghost {
+    @apply text-white hover:bg-white/5;
   }
 
   /* Glassmorphism Card */
   .glass-card {
-    @apply bg-zinc-950/50 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] overflow-hidden;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
+    @apply bg-zinc-950/40 backdrop-blur-2xl border border-white/5 rounded-[1.5rem] overflow-hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
   }
 
   .input-bubbly {
-    @apply bg-zinc-900/50 border-white/5 rounded-2xl px-5 py-4 focus:border-white/20 focus:ring-1 focus:ring-white/20 transition-all outline-none text-white;
+    @apply bg-zinc-900/50 border-white/5 rounded-xl px-5 py-4 focus:border-white/10 transition-all outline-none text-white;
   }
 }
 

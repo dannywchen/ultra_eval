@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { DashboardLayout } from '@/components/dashboard-layout';
 import {
     User,
@@ -23,7 +23,16 @@ import { cn } from '@/lib/utils';
 export default function ProfilePage() {
     const [student, setStudent] = useState<Student | null>(null);
     const [reports, setReports] = useState<Report[]>([]);
+    const [totalStudents, setTotalStudents] = useState<number>(0);
+    const [rank, setRank] = useState<number | string>('--');
     const [loading, setLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
+
+    // Edit form state
+    const [editName, setEditName] = useState('');
+    const [editSchool, setEditSchool] = useState('');
+    const [editGrade, setEditGrade] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         fetchProfileData();
@@ -39,6 +48,10 @@ export default function ProfilePage() {
                 return;
             }
 
+            // Fetch total students for rank
+            const { count: studentCount } = await supabase.from('students').select('*', { count: 'exact', head: true });
+            setTotalStudents(studentCount || 0);
+
             // Fetch student profile
             const { data: studentData, error: studentError } = await supabase
                 .from('students')
@@ -48,6 +61,20 @@ export default function ProfilePage() {
 
             if (studentError) throw studentError;
             setStudent(studentData);
+
+            // Set edit form defaults
+            if (studentData) {
+                setEditName(studentData.name || '');
+                setEditSchool(studentData.school || '');
+                setEditGrade(studentData.grade || '');
+
+                // Determine rank
+                const { count: rankCount } = await supabase
+                    .from('students')
+                    .select('*', { count: 'exact', head: true })
+                    .gt('elo', studentData.elo);
+                setRank((rankCount || 0) + 1);
+            }
 
             // Fetch student's reports/achievements
             const { data: reportsData, error: reportsError } = await supabase
@@ -63,6 +90,31 @@ export default function ProfilePage() {
             console.error('Error fetching profile data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSaveProfile = async () => {
+        if (!student) return;
+        setIsSaving(true);
+        try {
+            const supabase = getSupabase();
+            const { error } = await supabase
+                .from('students')
+                .update({
+                    name: editName,
+                    school: editSchool,
+                    grade: editGrade,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', student.id);
+
+            if (error) throw error;
+            setIsEditing(false);
+            fetchProfileData();
+        } catch (error) {
+            console.error('Error saving profile:', error);
+        } finally {
+            setIsSaving(false);
         }
     };
 
@@ -83,37 +135,36 @@ export default function ProfilePage() {
 
                     {/* Hero Profile Section */}
                     <div className="flex flex-col md:flex-row items-center md:items-end gap-10">
-                        <motion.div
-                            initial={{ scale: 0.8, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="relative group"
-                        >
-                            <div className="h-44 w-44 rounded-[3rem] bg-gradient-to-br from-zinc-800 to-black border-4 border-white/10 flex items-center justify-center font-black text-7xl text-white shadow-2xl group-hover:border-white/20 transition-all">
+                        <div className="relative group">
+                            <div className="h-40 w-40 rounded-3xl bg-zinc-900 border border-white/5 flex items-center justify-center font-bold text-6xl text-white shadow-2xl">
                                 {student?.name?.[0]}
                             </div>
-                            <div className="absolute -bottom-2 -right-2 bg-white text-black p-3 rounded-2xl shadow-xl">
-                                <Zap className="h-6 w-6 fill-black" />
+                            <div className="absolute -bottom-2 -right-2 bg-white text-black p-2 rounded-xl shadow-xl">
+                                <Zap className="h-5 w-5 fill-black" />
                             </div>
-                        </motion.div>
+                        </div>
 
                         <div className="flex-1 text-center md:text-left space-y-4">
                             <div className="space-y-1">
-                                <motion.h1
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    className="text-5xl md:text-6xl font-black tracking-tighter"
-                                >
+                                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">
                                     {student?.name}
-                                </motion.h1>
-                                <div className="flex flex-wrap justify-center md:justify-start gap-4 text-zinc-500 font-bold text-sm uppercase tracking-widest leading-none">
+                                </h1>
+                                <div className="flex flex-wrap justify-center md:justify-start gap-4 text-zinc-500 font-semibold text-sm uppercase tracking-widest leading-none">
                                     <span className="flex items-center gap-1.5"><GraduationCap className="h-4 w-4" /> {student?.school || 'Unlisted Institution'}</span>
-                                    <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" /> Global Citizen</span>
+                                    {student?.grade && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Grade {student.grade}</span>}
                                 </div>
                             </div>
 
                             <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
-                                <button className="btn-sleek btn-sleek-primary px-8">Edit Profile</button>
-                                <button className="btn-sleek btn-sleek-dark px-10">Share <ExternalLink className="ml-2 h-4 w-4" /></button>
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="btn-3d btn-3d-primary px-8 py-2.5 text-sm"
+                                >
+                                    Edit Profile
+                                </button>
+                                <button className="btn-3d btn-3d-dark px-10 py-2.5 text-sm flex items-center gap-2">
+                                    Share <ExternalLink className="h-4 w-4" />
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -121,76 +172,142 @@ export default function ProfilePage() {
                     {/* Stats Highlights */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {[
-                            { label: 'Ranking Score', value: student?.elo || 0, icon: TrendingUp },
+                            { label: 'ELO Score', value: student?.elo || 0, icon: TrendingUp },
                             { label: 'Achievements', value: reports.length, icon: Award },
-                            { label: 'Profile Age', value: '4d', icon: Calendar },
-                            { label: 'Rank', value: '#--', icon: Zap },
+                            { label: 'Global Rank', value: `#${rank}`, icon: Zap },
+                            { label: 'Registry Size', value: totalStudents, icon: MapPin },
                         ].map((item, i) => (
-                            <motion.div
+                            <div
                                 key={item.label}
-                                initial={{ opacity: 0, y: 20 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: i * 0.1 }}
-                                className="glass-card p-6 text-center md:text-left group"
+                                className="glass-card p-6 text-center md:text-left group border-white/5"
                             >
                                 <item.icon className="h-5 w-5 text-zinc-600 mb-2 group-hover:text-white transition-colors" />
-                                <div className="text-3xl font-black tracking-tighter">{item.value}</div>
-                                <div className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mt-1">{item.label}</div>
-                            </motion.div>
+                                <div className="text-3xl font-bold tracking-tighter">{item.value}</div>
+                                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{item.label}</div>
+                            </div>
                         ))}
                     </div>
 
                     {/* Portfolio / Achievements */}
                     <div className="space-y-8">
-                        <h2 className="text-3xl font-black tracking-tighter underline decoration-white/10 underline-offset-8">Accomplishments</h2>
+                        <h2 className="text-3xl font-bold tracking-tighter underline decoration-white/10 underline-offset-8">Accomplishments</h2>
 
                         <div className="grid gap-6">
                             {reports.length === 0 ? (
-                                <div className="glass-card p-12 text-center text-zinc-500 font-bold border-dashed">
+                                <div className="glass-card p-12 text-center text-zinc-500 font-semibold border-white/5">
                                     No accomplishments verified yet. Start your journey on the Dashboard.
                                 </div>
                             ) : (
                                 reports.map((report, i) => (
-                                    <motion.div
+                                    <div
                                         key={report.id}
-                                        initial={{ opacity: 0, y: 20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: i * 0.05 }}
                                         className="glass-card p-8 group hover:bg-zinc-900/50 transition-all border-white/5"
                                     >
                                         <div className="flex flex-col md:flex-row justify-between gap-6">
                                             <div className="space-y-3">
                                                 <div className="flex items-center gap-3">
-                                                    <span className="bg-white text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">{report.category}</span>
-                                                    <span className="text-zinc-600 text-xs font-bold">{new Date(report.created_at).toLocaleDateString()}</span>
+                                                    <span className="bg-white text-black text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest leading-none">{report.category}</span>
+                                                    <span className="text-zinc-600 text-[10px] font-bold">{new Date(report.created_at).toLocaleDateString()}</span>
                                                 </div>
-                                                <h3 className="text-2xl font-black tracking-tight leading-tight">{report.title}</h3>
-                                                <p className="text-zinc-500 font-medium max-w-2xl">{report.description}</p>
+                                                <h3 className="text-2xl font-bold tracking-tight leading-tight">{report.title}</h3>
+                                                <p className="text-zinc-500 font-medium max-w-2xl text-sm leading-relaxed">{report.description}</p>
                                             </div>
 
                                             <div className="flex flex-col items-center md:items-end justify-center min-w-[120px]">
-                                                <div className="text-4xl font-black text-white">+{report.elo_awarded}</div>
-                                                <div className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Verified Impact</div>
+                                                <div className="text-4xl font-bold text-white">+{report.elo_awarded}</div>
+                                                <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">ELO Issued</div>
                                             </div>
                                         </div>
 
                                         {report.ai_feedback && (
                                             <div className="mt-8 pt-6 border-t border-white/5">
-                                                <div className="flex items-center gap-2 mb-2 text-zinc-500">
-                                                    <Sparkles className="h-4 w-4" />
-                                                    <span className="text-[10px] font-black uppercase tracking-widest">AI Evaluator Notes</span>
+                                                <div className="flex items-center gap-2 mb-2 text-zinc-600">
+                                                    <Sparkles className="h-3 w-3" />
+                                                    <span className="text-[9px] font-bold uppercase tracking-widest">Ultra Eval Notes</span>
                                                 </div>
-                                                <p className="text-sm font-medium text-zinc-400 italic">
+                                                <p className="text-sm font-semibold text-zinc-400 italic">
                                                     "{report.ai_feedback}"
                                                 </p>
                                             </div>
                                         )}
-                                    </motion.div>
+                                    </div>
                                 ))
                             )}
                         </div>
                     </div>
                 </div>
+
+                {/* Edit Profile Modal */}
+                <AnimatePresence>
+                    {isEditing && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setIsEditing(false)}
+                                className="absolute inset-0 bg-black/80 backdrop-blur-md"
+                            />
+                            <motion.div
+                                initial={{ scale: 0.95, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.95, opacity: 0 }}
+                                className="relative w-full max-w-lg glass-card p-8 md:p-10 border-white/10 bg-zinc-950"
+                            >
+                                <div className="space-y-6">
+                                    <div className="text-center space-y-2 mb-8">
+                                        <h2 className="text-3xl font-bold tracking-tighter">Update Profile</h2>
+                                        <p className="text-zinc-500 font-semibold text-sm">Review your credentials for accuracy.</p>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest ml-1">Full Name</label>
+                                            <input
+                                                className="w-full bg-white/5 border border-white/5 rounded-xl px-5 py-4 text-sm font-bold outline-none focus:border-white/10 transition-all"
+                                                value={editName}
+                                                onChange={(e) => setEditName(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest ml-1">Institution / School</label>
+                                            <input
+                                                className="w-full bg-white/5 border border-white/5 rounded-xl px-5 py-4 text-sm font-bold outline-none focus:border-white/10 transition-all"
+                                                value={editSchool}
+                                                onChange={(e) => setEditSchool(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <label className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest ml-1">Grade Level</label>
+                                            <input
+                                                className="w-full bg-white/5 border border-white/5 rounded-xl px-5 py-4 text-sm font-bold outline-none focus:border-white/10 transition-all"
+                                                value={editGrade}
+                                                onChange={(e) => setEditGrade(e.target.value)}
+                                                placeholder="e.g. 12"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-4 pt-4">
+                                        <button
+                                            onClick={() => setIsEditing(false)}
+                                            className="flex-1 btn-3d btn-3d-dark py-4 text-sm font-bold"
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button
+                                            onClick={handleSaveProfile}
+                                            disabled={isSaving}
+                                            className="flex-1 btn-3d btn-3d-primary py-4 text-sm font-bold"
+                                        >
+                                            {isSaving ? 'Saving...' : 'Save Changes'}
+                                        </button>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
             </div>
         </DashboardLayout>
     );
