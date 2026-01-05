@@ -72,7 +72,7 @@ export function Sidebar({ className }: SidebarProps) {
                         alt="Ultra"
                         className="h-5 w-auto object-contain"
                     />
-                    <span className="text-[10px] font-medium text-zinc-600 tracking-tighter mt-1">(beta)</span>
+                    <span className="text-[10px] font-medium text-zinc-600 tracking-tighter mt-1">(eval)</span>
                 </Link>
             </div>
 

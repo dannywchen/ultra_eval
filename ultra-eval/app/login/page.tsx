@@ -47,7 +47,7 @@ export default function LoginPage() {
                                 alt="Ultra"
                                 className="h-8 w-auto object-contain"
                             />
-                            <span className="text-[12px] font-medium text-zinc-500 tracking-tighter mt-1">(beta)</span>
+                            <span className="text-[12px] font-medium text-zinc-500 tracking-tighter mt-1">(eval)</span>
                         </div>
                     </Link>
                     <div className="pt-4 space-y-1">

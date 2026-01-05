@@ -564,11 +564,23 @@ export default function DashboardPage() {
                                         onClick={async () => {
                                             const node = document.getElementById('share-card');
                                             if (node) {
-                                                const dataUrl = await toPng(node, { cacheBust: true });
-                                                const link = document.createElement('a');
-                                                link.download = `ultra-eval-${shareData.id}.png`;
-                                                link.href = dataUrl;
-                                                link.click();
+                                                try {
+                                                    const dataUrl = await toPng(node, {
+                                                        cacheBust: true,
+                                                        pixelRatio: 2, // Higher quality
+                                                    });
+                                                    const link = document.createElement('a');
+                                                    link.style.display = 'none';
+                                                    link.href = dataUrl;
+                                                    link.download = `ultra-eval-${shareData.id}.png`;
+                                                    document.body.appendChild(link);
+                                                    link.click();
+                                                    setTimeout(() => {
+                                                        document.body.removeChild(link);
+                                                    }, 100);
+                                                } catch (err) {
+                                                    console.error('Failed to download image:', err);
+                                                }
                                             }
                                         }}
                                         className="w-full btn-3d btn-3d-primary py-3 font-bold flex items-center justify-center gap-2"

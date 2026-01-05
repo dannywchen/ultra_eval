@@ -25,8 +25,13 @@ export default function Home() {
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-white/5 bg-black/50 backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6">
-          <Link href="/" className="text-2xl font-bold tracking-tighter">
-            Ultra Eval
+          <Link href="/" className="flex items-center gap-1.5 grayscale opacity-80 hover:opacity-100 transition-opacity">
+            <img
+              src="/White Logo 512x174.png"
+              alt="Ultra"
+              className="h-5 w-auto object-contain"
+            />
+            <span className="text-[10px] font-medium text-zinc-600 tracking-tighter mt-1">(eval)</span>
           </Link>
           <div className="flex items-center gap-8">
             <Link href={user ? "/dashboard" : "/login"} className="text-sm font-semibold text-zinc-500 hover:text-white transition-colors">
@@ -38,13 +43,17 @@ export default function Home() {
 
       {/* Hero Section */}
       <section className="relative flex-1 flex flex-col items-center justify-center text-center px-6">
-        <motion.h1
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-7xl font-bold tracking-tighter max-w-4xl leading-tight"
+          className="flex justify-center mb-6"
         >
-          Ultra Eval
-        </motion.h1>
+          <img
+            src="/White Logo 512x174.png"
+            alt="Ultra Eval"
+            className="h-16 md:h-24 w-auto object-contain"
+          />
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}
