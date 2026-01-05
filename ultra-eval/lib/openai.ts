@@ -177,7 +177,7 @@ export function generateEmailResponse(
 <body>
   <div class="container">
     <div class="header">
-      <img src="https://rhbgejhoigdbbdwiklih.supabase.co/storage/v1/object/public/assets/White%20Logo%20512x174.png" class="logo" alt="Ultra" style="filter: invert(1); max-height: 24px;">
+      <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.04em;">Ultra</div>
     </div>
     
     <div class="content">
@@ -227,7 +227,6 @@ export function generateEmailResponse(
       </div>
 
       <div class="footer">
-        Ultra Eval
       </div>
     </div>
   </div>
