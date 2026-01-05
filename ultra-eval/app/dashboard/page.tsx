@@ -166,16 +166,16 @@ export default function DashboardPage() {
 
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div className="space-y-1">
-                            <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">Dashboard</h1>
-                            <p className="text-zinc-500 font-semibold text-lg">Good to see you, {student?.name?.split(' ')[0]}</p>
+                        <div className="space-y-0.5">
+                            <h1 className="text-2xl font-semibold tracking-tighter">Dashboard</h1>
+                            <p className="text-zinc-500 font-medium text-[13px]">Welcome back, {student?.name?.split(' ')[0]}</p>
                         </div>
 
                         <button
                             onClick={() => setShowModal(true)}
-                            className="btn-3d btn-3d-primary text-lg px-8 py-4"
+                            className="btn-3d btn-3d-primary py-2 px-5 text-sm"
                         >
-                            <Plus className="mr-2 h-5 w-5" />
+                            <Plus className="mr-2 h-4 w-4" />
                             Submit Accomplishment
                         </button>
                     </div>
@@ -207,7 +207,7 @@ export default function DashboardPage() {
                                         <stat.icon className={cn("h-6 w-6", stat.color)} />
                                     </div>
                                 </div>
-                                <div className="text-4xl font-bold tracking-tighter mb-1">{stat.value}</div>
+                                <div className="text-4xl font-semibold tracking-tighter mb-1">{stat.value}</div>
                                 <div className="text-zinc-500 font-semibold uppercase tracking-widest text-[10px]">{stat.label}</div>
                             </div>
                         ))}
@@ -216,7 +216,7 @@ export default function DashboardPage() {
                     {/* Recent Submissions */}
                     <div className="space-y-6">
                         <div className="flex items-center justify-between px-2">
-                            <h2 className="text-2xl font-bold tracking-tighter uppercase underline decoration-white/20 underline-offset-8">Activity Feed</h2>
+                            <h2 className="text-2xl tracking-tighter uppercase underline decoration-white/20 underline-offset-8">Activity Feed</h2>
                         </div>
 
                         <div className="grid gap-4">
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                                             +{report.elo_awarded}
                                         </div>
                                         <div className="flex-1 text-center md:text-left">
-                                            <h4 className="text-xl font-bold tracking-tight group-hover:text-white transition-colors capitalize">{report.title}</h4>
+                                            <h4 className="text-xl font-semibold tracking-tight group-hover:text-white transition-colors capitalize">{report.title}</h4>
                                             <p className="text-zinc-500 text-sm font-medium truncate max-w-md">{report.description}</p>
                                         </div>
                                         <div className="text-zinc-700 font-mono text-xs uppercase tracking-tighter">
@@ -337,7 +337,7 @@ export default function DashboardPage() {
                                         {!isSubmitting && !evaluationResult && (
                                             <form onSubmit={handleSubmit} className="space-y-8">
                                                 <div className="space-y-2 text-center mb-8">
-                                                    <h2 className="text-3xl font-bold tracking-tighter">New Entry</h2>
+                                                    <h2 className="text-3xl tracking-tighter">New Entry</h2>
                                                     <p className="text-zinc-500 font-semibold">What did you accomplish today?</p>
                                                 </div>
 
@@ -345,7 +345,7 @@ export default function DashboardPage() {
                                                     <div className="space-y-2">
                                                         <input
                                                             placeholder="Short Title..."
-                                                            className="w-full bg-transparent text-2xl font-bold tracking-tight placeholder:text-zinc-900 outline-none border-none"
+                                                            className="w-full bg-transparent text-2xl font-semibold tracking-tight placeholder:text-zinc-900 outline-none border-none"
                                                             value={title}
                                                             onChange={(e) => setTitle(e.target.value)}
                                                             required
@@ -359,7 +359,7 @@ export default function DashboardPage() {
                                                                 type="button"
                                                                 onClick={() => setCategory(cat)}
                                                                 className={cn(
-                                                                    "px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all",
+                                                                    "px-4 py-2 rounded-full text-[10px] font-semibold uppercase tracking-widest transition-all",
                                                                     category === cat ? "bg-white text-black" : "bg-white/5 text-zinc-600 hover:text-white"
                                                                 )}
                                                             >
@@ -380,7 +380,7 @@ export default function DashboardPage() {
 
                                                     <div className="space-y-4">
                                                         <div className="flex items-center justify-between">
-                                                            <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Supporting Evidence</label>
+                                                            <label className="text-[10px] font-semibold uppercase tracking-widest text-zinc-600">Supporting Evidence</label>
                                                             <span className="text-[10px] text-zinc-800">Images or Documents</span>
                                                         </div>
 
@@ -419,7 +419,7 @@ export default function DashboardPage() {
 
                                                 <button
                                                     type="submit"
-                                                    className="w-full btn-3d btn-3d-primary py-3 font-bold group"
+                                                    className="w-full btn-3d btn-3d-primary py-3 font-semibold group"
                                                 >
                                                     Evaluate Impact
                                                     <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -444,22 +444,22 @@ export default function DashboardPage() {
                                                 className="py-6 space-y-8"
                                             >
                                                 <div className="text-left space-y-2 mb-8">
-                                                    <h2 className="text-2xl font-bold tracking-tighter">Analysis Complete</h2>
-                                                    <p className="text-zinc-500 font-semibold text-sm">Verified accomplishment issued to registry.</p>
+                                                    <h2 className="text-2xl font-semibold tracking-tighter">Analysis Complete</h2>
+                                                    <p className="text-zinc-500 font-medium text-sm">Verified accomplishment issued to registry.</p>
                                                 </div>
 
                                                 <div className="grid md:grid-cols-2 gap-10">
                                                     <div className="space-y-6">
                                                         <div className="glass-card bg-white p-8 text-black text-center rounded-[1.5rem]">
                                                             <div className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">ELO Issued</div>
-                                                            <div className="text-5xl font-bold tracking-tighter">+{evaluationResult.elo_awarded}</div>
+                                                            <div className="text-5xl font-semibold tracking-tighter">+{evaluationResult.elo_awarded}</div>
                                                         </div>
 
                                                         <div className="grid grid-cols-2 gap-4">
                                                             {Object.entries(evaluationResult.category_score).map(([key, value]) => (
                                                                 <div key={key} className="bg-white/5 rounded-2xl p-4 border border-white/5">
                                                                     <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{key}</div>
-                                                                    <div className="text-xl font-bold">{value as number}/10</div>
+                                                                    <div className="text-xl font-semibold">{value as number}/10</div>
                                                                 </div>
                                                             ))}
                                                         </div>
@@ -578,7 +578,7 @@ export default function DashboardPage() {
                                     </button>
                                     <button
                                         onClick={() => setShowShareModal(false)}
-                                        className="w-full text-zinc-500 font-bold text-sm hover:text-white transition-colors"
+                                        className="w-full text-zinc-500 font-semibold text-sm hover:text-white transition-colors"
                                     >
                                         Dismiss
                                     </button>

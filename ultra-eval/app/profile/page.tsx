@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
                         <div className="flex-1 text-center md:text-left space-y-4">
                             <div className="space-y-1">
-                                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
+                                <h1 className="text-3xl font-semibold tracking-tighter">
                                     {student?.name}
                                 </h1>
                                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-zinc-500 font-semibold text-sm uppercase tracking-widest leading-none">
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                                                     <span className="bg-white text-black text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest leading-none">{report.category}</span>
                                                     <span className="text-zinc-600 text-[10px] font-bold">{new Date(report.created_at).toLocaleDateString()}</span>
                                                 </div>
-                                                <h3 className="text-2xl font-bold tracking-tight leading-tight">{report.title}</h3>
+                                                <h3 className="text-2xl font-semibold tracking-tight leading-tight">{report.title}</h3>
                                                 <p className="text-zinc-500 font-medium max-w-2xl text-sm leading-relaxed">{report.description}</p>
                                             </div>
 
@@ -222,8 +222,7 @@ export default function ProfilePage() {
                                         {report.ai_feedback && (
                                             <div className="mt-8 pt-6 border-t border-white/5">
                                                 <div className="flex items-center gap-2 mb-2 text-zinc-600">
-                                                    <Sparkles className="h-3 w-3" />
-                                                    <span className="text-[9px] font-bold uppercase tracking-widest">Ultra Eval Notes</span>
+                                                    <span className="text-[9px] font-semibold uppercase tracking-widest text-zinc-500">Ultra Eval Notes</span>
                                                 </div>
                                                 <p className="text-sm font-semibold text-zinc-400 italic">
                                                     "{report.ai_feedback}"

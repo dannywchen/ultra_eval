@@ -66,18 +66,18 @@ export function Sidebar({ className }: SidebarProps) {
         >
             {/* Logo */}
             <div className="flex h-16 items-center px-4 mb-8">
-                <Link href="/" className="flex items-center gap-1">
+                <Link href="/" className="flex items-center gap-1.5 grayscale opacity-80 hover:opacity-100 transition-opacity">
                     <img
                         src="/White Logo 512x174.png"
                         alt="Ultra"
-                        className="h-6 w-auto object-contain"
+                        className="h-5 w-auto object-contain"
                     />
-                    <span className="text-[12px] font-bold text-zinc-600 tracking-tighter mt-1">(eval)</span>
+                    <span className="text-[10px] font-medium text-zinc-600 tracking-tighter mt-1">(beta)</span>
                 </Link>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-2">
+            <nav className="flex-1 space-y-1">
                 {navigation.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -85,7 +85,7 @@ export function Sidebar({ className }: SidebarProps) {
                             key={item.name}
                             href={item.href}
                             className={cn(
-                                'flex items-center gap-3 rounded-full px-5 py-3 text-sm font-bold transition-all duration-200',
+                                'flex items-center gap-3 rounded-full px-5 py-2.5 text-[13px] font-semibold transition-all duration-200',
                                 isActive
                                     ? 'bg-white text-black'
                                     : 'text-zinc-500 hover:bg-white/5 hover:text-white'
@@ -99,9 +99,9 @@ export function Sidebar({ className }: SidebarProps) {
             </nav>
 
             {/* User section */}
-            <div className="mt-auto pt-6 border-t border-white/5 font-bold">
+            <div className="mt-auto pt-6 border-t border-white/5 font-semibold">
                 <button
-                    className="flex w-full items-center gap-3 rounded-full px-5 py-3 text-sm text-zinc-500 transition-all duration-200 hover:bg-white/5 hover:text-white"
+                    className="flex w-full items-center gap-3 rounded-full px-5 py-3 text-[13px] text-zinc-500 transition-all duration-200 hover:bg-white/5 hover:text-white"
                     onClick={async () => {
                         const supabase = getSupabase();
                         await supabase.auth.signOut();

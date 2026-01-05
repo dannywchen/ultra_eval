@@ -135,7 +135,7 @@ export default function LeaderboardPage() {
                     {/* Header */}
                     <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
                         <div>
-                            <h1 className="text-6xl md:text-7xl font-bold tracking-tighter">Leaderboard</h1>
+                            <h1 className="text-3xl font-semibold tracking-tighter">Leaderboard</h1>
                         </div>
 
                         <div className="relative w-full md:w-96 group">
@@ -316,8 +316,7 @@ export default function LeaderboardPage() {
                                                             {report.ai_feedback && isSelf && (
                                                                 <div className="pt-4 border-t border-white/5">
                                                                     <div className="flex items-center gap-2 mb-2 text-zinc-600">
-                                                                        <Sparkles className="h-3 w-3" />
-                                                                        <span className="text-[9px] font-bold uppercase tracking-widest">Ultra Eval Notes</span>
+                                                                        <span className="text-[9px] font-semibold uppercase tracking-widest text-zinc-500">Ultra Eval Notes</span>
                                                                     </div>
                                                                     <p className="text-xs font-semibold text-zinc-400 italic">
                                                                         "{report.ai_feedback}"

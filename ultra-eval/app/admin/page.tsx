@@ -105,8 +105,8 @@ export default function AdminDashboard() {
                     {/* Users List */}
                     <div className="grid gap-2">
                         <div className="flex items-center justify-between px-6 mb-2">
-                            <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-700">User Profile</h2>
-                            <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-700">Rating</h2>
+                            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-700">User Profile</h2>
+                            <h2 className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-700">Rating</h2>
                         </div>
 
                         {filteredStudents.map((student, i) => (
@@ -130,11 +130,11 @@ export default function AdminDashboard() {
                                             )}
                                         </div>
                                         <div>
-                                            <h4 className="text-base font-bold tracking-tight text-white inline-flex items-center gap-2">
+                                            <h4 className="text-base font-semibold tracking-tight text-white inline-flex items-center gap-2">
                                                 {student.name}
                                                 {['dannywchen3@gmail.com', 'dannywchenofficial@gmail.com'].includes(student.email || '') && <ShieldCheck className="h-3 w-3 text-zinc-600" />}
                                             </h4>
-                                            <p className="text-zinc-600 font-bold text-[9px] uppercase tracking-widest">{student.email}</p>
+                                            <p className="text-zinc-600 font-semibold text-[9px] uppercase tracking-widest">{student.email}</p>
                                         </div>
                                     </div>
 
