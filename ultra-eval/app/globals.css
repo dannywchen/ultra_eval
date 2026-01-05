@@ -99,7 +99,7 @@
   h5,
   h6 {
     font-weight: 500;
-    letter-spacing: -0.04em;
+    letter-spacing: -0.05em;
   }
 }
 
@@ -107,29 +107,29 @@
 
   /* 3D Slim Buttons */
   .btn-3d {
-    @apply inline-flex items-center justify-center rounded-2xl px-5 py-2.5 font-semibold text-sm tracking-tight transition-all duration-150 active:translate-y-0.5 disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-2xl px-5 py-1.5 font-semibold text-[13px] tracking-tight transition-all duration-150 active:translate-y-0.5 disabled:opacity-50;
   }
 
   .btn-3d-primary {
-    @apply bg-white text-black;
-    box-shadow: 0 2px 0 #e4e4e7;
+    @apply bg-white text-black border-[1.5px] border-zinc-200;
+    box-shadow: 0 3px 0 #d4d4d8;
   }
 
   .btn-3d-primary:hover {
-    @apply bg-zinc-200;
+    @apply bg-zinc-100;
   }
 
   .btn-3d-primary:active {
-    box-shadow: 0 1px 0 #e4e4e7;
+    box-shadow: 0 1px 0 #d4d4d8;
   }
 
   .btn-3d-dark {
-    @apply bg-zinc-900 text-white border border-white/5;
-    box-shadow: 0 2px 0 #000000;
+    @apply bg-zinc-900 text-white border-[1.5px] border-white/10;
+    box-shadow: 0 3px 0 #000000;
   }
 
   .btn-3d-dark:hover {
-    @apply bg-zinc-800;
+    @apply bg-zinc-800 border-white/20;
   }
 
   .btn-3d-dark:active {
@@ -137,13 +137,13 @@
   }
 
   .btn-3d-ghost {
-    @apply text-white/70 hover:text-white hover:bg-white/5;
+    @apply text-white/60 hover:text-white hover:bg-white/5;
   }
 
   /* Glassmorphism Card */
   .glass-card {
-    @apply bg-zinc-950/40 backdrop-blur-2xl border border-white/5 rounded-[1.5rem] overflow-hidden;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%);
+    @apply bg-zinc-950/40 backdrop-blur-2xl border border-white/15 rounded-[1.25rem] overflow-hidden;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 100%);
   }
 
   .input-bubbly {

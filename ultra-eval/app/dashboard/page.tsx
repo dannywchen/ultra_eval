@@ -17,7 +17,8 @@ import {
     LayoutDashboard,
     ArrowUpRight,
     Share2,
-    Download
+    Download,
+    Mail
 } from 'lucide-react';
 import { getSupabase, Student, Report } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
@@ -27,6 +28,13 @@ export default function DashboardPage() {
     const [description, setDescription] = useState('');
     const [category, setCategory] = useState('accomplishment');
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const formatAnalysis = (text: string) => {
+        if (!text) return ["No analysis provided."];
+        // Split by major sections: Impact, Productivity, Quality, Relevance or existing newlines
+        const sections = text.split(/(?=Impact \d: |Productivity \d: |Quality \d: |Relevance \d: |To improve)/g);
+        return sections.map(s => s.trim()).filter(Boolean);
+    };
     const [showModal, setShowModal] = useState(false);
     const [evaluationResult, setEvaluationResult] = useState<any>(null);
     const [student, setStudent] = useState<Student | null>(null);
@@ -157,12 +165,12 @@ export default function DashboardPage() {
                                 ),
                                 icon: Trophy,
                                 color: 'text-white',
-                                bg: 'bg-zinc-900 border border-white/5'
+                                bg: ''
                             },
                         ].map((stat, i) => (
                             <div
                                 key={i}
-                                className={cn("glass-card p-8 group transition-all cursor-default", stat.bg)}
+                                className={cn("glass-card p-8 group transition-all cursor-default")}
                             >
                                 <div className="flex items-center mb-4">
                                     <div className="p-3 rounded-2xl bg-white/5 flex items-center justify-center">
@@ -191,7 +199,7 @@ export default function DashboardPage() {
                                     <div
                                         key={report.id}
                                         onClick={() => setSelectedReport(report)}
-                                        className="glass-card p-6 flex flex-col md:flex-row items-center gap-6 group hover:bg-zinc-900/50 transition-all cursor-pointer border-white/5"
+                                        className="glass-card p-6 flex flex-col md:flex-row items-center gap-6 group hover:bg-zinc-900/50 transition-all cursor-pointer border-white/15"
                                     >
                                         <div className="bg-white text-black h-12 w-12 rounded-2xl flex items-center justify-center font-bold text-lg flex-shrink-0">
                                             +{report.elo_awarded}
@@ -254,9 +262,13 @@ export default function DashboardPage() {
 
                                             <div className="space-y-8">
                                                 <div className="space-y-4">
-                                                    <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 text-white/40">Ultra Eval Feedback</h4>
-                                                    <div className="glass-card p-6 bg-white/[0.03] text-white leading-relaxed font-semibold italic border-white/5 rounded-2xl">
-                                                        "{selectedReport.ai_feedback || "No feedback provided."}"
+                                                    <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">Ultra Analysis</h4>
+                                                    <div className="space-y-3">
+                                                        {formatAnalysis(selectedReport.ai_feedback || "").map((p, i) => (
+                                                            <div key={i} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium">
+                                                                {p}
+                                                            </div>
+                                                        ))}
                                                     </div>
                                                 </div>
 
@@ -266,14 +278,14 @@ export default function DashboardPage() {
                                                             setShareData(selectedReport);
                                                             setShowShareModal(true);
                                                         }}
-                                                        className="flex-1 btn-3d btn-3d-dark py-4 text-lg flex items-center justify-center gap-2"
+                                                        className="flex-1 btn-3d btn-3d-dark py-2.5 flex items-center justify-center gap-2 text-sm"
                                                     >
-                                                        <Share2 className="h-5 w-5" />
+                                                        <Share2 className="h-4 w-4" />
                                                         Share Impact
                                                     </button>
                                                     <button
                                                         onClick={resetForm}
-                                                        className="flex-1 btn-3d btn-3d-primary py-3"
+                                                        className="flex-1 btn-3d btn-3d-primary py-2.5 text-sm"
                                                     >
                                                         Close
                                                     </button>
@@ -294,7 +306,7 @@ export default function DashboardPage() {
                                                     <div className="space-y-2">
                                                         <input
                                                             placeholder="Short Title..."
-                                                            className="w-full bg-transparent text-3xl font-bold tracking-tight placeholder:text-zinc-900 outline-none border-none"
+                                                            className="w-full bg-transparent text-2xl font-bold tracking-tight placeholder:text-zinc-900 outline-none border-none"
                                                             value={title}
                                                             onChange={(e) => setTitle(e.target.value)}
                                                             required
@@ -330,10 +342,10 @@ export default function DashboardPage() {
 
                                                 <button
                                                     type="submit"
-                                                    className="w-full btn-3d btn-3d-primary py-5 text-xl group"
+                                                    className="w-full btn-3d btn-3d-primary py-3 font-bold group"
                                                 >
                                                     Evaluate Impact
-                                                    <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                                                    <ChevronRight className="ml-1 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                                                 </button>
                                             </form>
                                         )}
@@ -376,11 +388,15 @@ export default function DashboardPage() {
                                                         </div>
                                                     </div>
 
-                                                    <div className="space-y-8">
+                                                    <div className="space-y-6">
                                                         <div className="space-y-4">
-                                                            <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Ultra Eval Notes</h4>
-                                                            <div className="glass-card p-6 bg-white/[0.03] text-zinc-100 leading-relaxed font-medium border-white/5 rounded-2xl">
-                                                                {evaluationResult.feedback}
+                                                            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">Ultra Analysis</h4>
+                                                            <div className="space-y-3">
+                                                                {(evaluationResult.analysis_parts || formatAnalysis(evaluationResult.feedback)).map((part: string, idx: number) => (
+                                                                    <div key={idx} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium">
+                                                                        {part}
+                                                                    </div>
+                                                                ))}
                                                             </div>
                                                         </div>
 
@@ -394,14 +410,14 @@ export default function DashboardPage() {
                                                                     } as any);
                                                                     setShowShareModal(true);
                                                                 }}
-                                                                className="flex-1 btn-3d btn-3d-dark py-4 text-lg flex items-center justify-center gap-2"
+                                                                className="flex-1 btn-3d btn-3d-dark py-2.5 text-sm flex items-center justify-center gap-2"
                                                             >
-                                                                <Share2 className="h-5 w-5" />
+                                                                <Share2 className="h-4 w-4" />
                                                                 Share
                                                             </button>
                                                             <button
                                                                 onClick={resetForm}
-                                                                className="flex-1 btn-3d btn-3d-primary py-4 text-lg"
+                                                                className="flex-1 btn-3d btn-3d-primary py-2.5 text-sm"
                                                             >
                                                                 Got it
                                                             </button>
@@ -436,32 +452,32 @@ export default function DashboardPage() {
                                 className="relative w-full max-w-sm"
                             >
                                 {/* Shareable Card */}
-                                <div id="share-card" className="bg-black border border-white/20 rounded-[1.5rem] overflow-hidden p-10 space-y-12 shadow-2xl relative scale-100 origin-center">
+                                <div id="share-card" className="bg-black border border-white/20 rounded-[1.25rem] overflow-hidden p-8 space-y-10 shadow-2xl relative scale-100 origin-center">
                                     <div className="flex justify-between items-start">
-                                        <div className="text-xl font-bold tracking-tighter">
-                                            Ultra<span className="text-[10px] ml-1 bg-white text-black px-2 py-0.5 rounded-full uppercase tracking-widest">eval</span>
+                                        <div className="flex items-center gap-1">
+                                            <img src="/White Logo 512x174.png" alt="Ultra" className="h-4 w-auto object-contain" />
+                                            <span className="text-[8px] font-bold text-zinc-600 tracking-tighter mt-0.5">(eval)</span>
                                         </div>
-                                        <div className="text-[9px] font-bold uppercase tracking-[0.3em] text-zinc-600">Official Record</div>
+                                        <div className="text-[8px] font-bold uppercase tracking-[0.3em] text-zinc-600">Official Record</div>
                                     </div>
 
-                                    <div className="space-y-4 py-8">
-                                        <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-500 text-center">Merit Issued</div>
-                                        <div className="text-9xl font-bold tracking-tighter text-white text-center leading-none">
+                                    <div className="space-y-3 py-6">
+                                        <div className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-500 text-center">ELO Issued</div>
+                                        <div className="text-8xl font-bold tracking-tighter text-white text-center leading-none">
                                             {shareData.elo_awarded}
                                         </div>
-                                        <div className="text-lg font-bold tracking-tight text-white/90 text-center capitalize">{shareData.title}</div>
+                                        <div className="text-base font-bold tracking-tight text-white/90 text-center capitalize">{shareData.title}</div>
                                     </div>
 
-                                    <div className="pt-10 border-t border-white/10 flex justify-between items-end">
+                                    <div className="pt-8 border-t border-white/10 flex justify-between items-end">
                                         <div className="space-y-2">
-                                            <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Contributor</div>
-                                            <div className="text-sm font-bold text-white">{student?.name}</div>
-                                            <div className="text-[9px] font-bold text-zinc-700 uppercase tracking-widest">{student?.school || 'Protocol Member'}</div>
+                                            <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Contributor</div>
+                                            <div className="text-sm font-bold text-white leading-none mb-1">{student?.name}</div>
+                                            <div className="text-[8px] font-bold text-zinc-700 uppercase tracking-widest">{student?.school || 'Protocol Member'}</div>
                                         </div>
                                         <div className="text-right space-y-2">
-                                            <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-600">Issue Date</div>
-                                            <div className="text-sm font-bold text-white">{new Date(shareData.created_at).toLocaleDateString()}</div>
-                                            <div className="text-[9px] font-bold text-zinc-700 uppercase tracking-widest">Registry Auth</div>
+                                            <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Issue Date</div>
+                                            <div className="text-sm font-bold text-white leading-none mb-1">{new Date(shareData.created_at).toLocaleDateString()}</div>
                                         </div>
                                     </div>
                                 </div>

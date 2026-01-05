@@ -3,7 +3,12 @@ import { evaluateReport, generateEmailResponse } from '@/lib/openai';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Initialize Resend only if API key is present to avoid crashing
+const getResendClient = () => {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey) return null;
+    return new Resend(apiKey);
+};
 
 export async function POST(request: NextRequest) {
     try {
@@ -82,16 +87,18 @@ export async function POST(request: NextRequest) {
         }
 
         // Send real email using Resend
+        // Send email only if client is available
         try {
-            if (process.env.RESEND_API_KEY && student.email) {
-                await resend.emails.send({
+            const resendClient = getResendClient();
+            if (resendClient && student.email) {
+                await resendClient.emails.send({
                     from: 'Ultra Eval <notifications@ultraeval.com>',
                     to: student.email,
                     subject: `+${evaluation.elo_awarded} ELO: "${title}" Graded`,
                     html: generateEmailResponse(student.name, title, evaluation),
                 });
             } else {
-                console.warn('RESEND_API_KEY or student email missing. Email not sent.');
+                console.warn('Resend client or student email missing. Email skipped.');
             }
         } catch (emailError) {
             console.error('Failed to send email:', emailError);

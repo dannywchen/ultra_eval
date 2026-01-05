@@ -46,10 +46,13 @@ export function Sidebar({ className }: SidebarProps) {
         >
             {/* Logo */}
             <div className="flex h-16 items-center px-4 mb-8">
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="text-2xl font-bold tracking-tighter text-white">
-                        Ultra<span className="text-[10px] ml-1 font-bold bg-white text-black px-2 py-0.5 rounded-full uppercase">eval</span>
-                    </div>
+                <Link href="/" className="flex items-center gap-1">
+                    <img
+                        src="/White Logo 512x174.png"
+                        alt="Ultra"
+                        className="h-6 w-auto object-contain"
+                    />
+                    <span className="text-[12px] font-bold text-zinc-600 tracking-tighter mt-1">(eval)</span>
                 </Link>
             </div>
 

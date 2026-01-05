@@ -18,6 +18,7 @@ function getOpenAIClient() {
 export interface EvaluationResult {
   elo_awarded: number;
   feedback: string;
+  analysis_parts: string[];
   category_score: {
     impact: number;
     productivity: number;
@@ -71,14 +72,19 @@ ELO CALCULATION (0-100):
 Provide your response in the following JSON format:
 {
   "elo_awarded": <number 0-100>,
-  "feedback": "<detailed analysis with compliment, ensuring no em dashes>",
+  "feedback": "<concise summary of results>",
+  "analysis_parts": [
+    "<Part 1: Specific insight about the achievement>",
+    "<Part 2: Breakdown of the impact and complexity>",
+    "<Part 3: Professional compliment and path forward>"
+  ],
   "category_score": {
     "impact": <number 0-10>,
     "productivity": <number 0-10>,
     "quality": <number 0-10>,
     "relevance": <number 0-10>
   }
-}`;
+} (Ensure no em dashes and no italics in the text fields) `;
 
   try {
     const client = getOpenAIClient();
@@ -111,7 +117,8 @@ Provide your response in the following JSON format:
     console.error('OpenAI evaluation error:', error);
     return {
       elo_awarded: 0,
-      feedback: 'Evaluation failed. Please provide more significant details.',
+      feedback: 'Evaluation failed.',
+      analysis_parts: ['Evaluation failed. Please provide more significant details.'],
       category_score: { impact: 0, productivity: 0, quality: 0, relevance: 0 },
     };
   }
@@ -143,7 +150,7 @@ export function generateEmailResponse(
     .elo-display { font-size: 72px; font-weight: 900; letter-spacing: -4px; margin: 20px 0; text-align: center; }
     .title { font-size: 20px; font-weight: bold; text-align: center; color: #888; margin-bottom: 40px; }
     .section-label { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: #555; margin-bottom: 12px; }
-    .feedback-box { background-color: #111; border-radius: 16px; padding: 24px; font-size: 16px; line-height: 1.6; color: #ccc; font-style: italic; margin-bottom: 32px; }
+    .feedback-box { background-color: #111; border-radius: 16px; padding: 24px; font-size: 16px; line-height: 1.6; color: #ccc; margin-bottom: 32px; }
     .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
     .grid-item { background-color: #111; border-radius: 16px; padding: 16px; }
     .grid-label { font-size: 10px; font-weight: bold; text-transform: uppercase; color: #444; margin-bottom: 4px; }
