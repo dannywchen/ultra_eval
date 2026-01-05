@@ -1,31 +1,30 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { DashboardLayout } from '@/components/dashboard-layout';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Search, TrendingUp, TrendingDown, Trophy, Medal } from 'lucide-react';
+    Trophy,
+    Search,
+    ChevronUp,
+    ChevronDown,
+    Crown,
+    Star,
+    Sparkles,
+    Loader2,
+    School
+} from 'lucide-react';
+import { getSupabase, Student, LeaderboardEntry } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
-import { getSupabase, Student } from '@/lib/supabase';
-
-interface LeaderboardUser extends Student {
-    rank: number;
-}
 
 export default function LeaderboardPage() {
+    const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
-    const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
-    const [students, setStudents] = useState<LeaderboardUser[]>([]);
     const [loading, setLoading] = useState(true);
+    const [sortConfig, setSortConfig] = useState<{
+        key: 'elo' | 'name' | 'school';
+        direction: 'asc' | 'desc';
+    }>({ key: 'elo', direction: 'desc' });
 
     useEffect(() => {
         fetchLeaderboard();
@@ -41,12 +40,13 @@ export default function LeaderboardPage() {
 
             if (error) throw error;
 
-            const rankedData = (data || []).map((s: Student, index: number) => ({
-                ...s,
-                rank: index + 1
+            // Add ranks manually
+            const rankedData = (data || []).map((student: any, index: number) => ({
+                ...student,
+                rank: index + 1,
             }));
 
-            setStudents(rankedData);
+            setLeaderboard(rankedData);
         } catch (error) {
             console.error('Error fetching leaderboard:', error);
         } finally {
@@ -54,45 +54,32 @@ export default function LeaderboardPage() {
         }
     };
 
-    const filteredLeaderboard = students
-        .filter(
-            (entry) =>
-                entry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                (entry.school && entry.school.toLowerCase().includes(searchQuery.toLowerCase())) ||
-                (entry.email && entry.email.toLowerCase().includes(searchQuery.toLowerCase()))
-        )
-        .sort((a, b) => (sortOrder === 'desc' ? b.elo - a.elo : a.elo - b.elo));
-
-    const getRankIcon = (rank: number) => {
-        switch (rank) {
-            case 1:
-                return <Trophy className="h-5 w-5 text-yellow-500" />;
-            case 2:
-                return <Medal className="h-5 w-5 text-gray-400" />;
-            case 3:
-                return <Medal className="h-5 w-5 text-amber-600" />;
-            default:
-                return null;
+    const handleSort = (key: 'elo' | 'name' | 'school') => {
+        let direction: 'asc' | 'desc' = 'desc';
+        if (sortConfig.key === key && sortConfig.direction === 'desc') {
+            direction = 'asc';
         }
+        setSortConfig({ key, direction });
     };
 
-    const getRankBadge = (rank: number) => {
-        if (rank <= 3) {
-            const colors = {
-                1: 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20',
-                2: 'bg-gray-400/10 text-gray-400 border-gray-400/20',
-                3: 'bg-amber-600/10 text-amber-600 border-amber-600/20',
-            };
-            return colors[rank as 1 | 2 | 3];
-        }
-        return 'bg-secondary text-foreground';
-    };
+    const filteredLeaderboard = leaderboard.filter((entry) => {
+        const query = searchQuery.toLowerCase();
+        return (
+            entry.name?.toLowerCase().includes(query) ||
+            entry.school?.toLowerCase().includes(query)
+        );
+    }).sort((a, b) => {
+        const { key, direction } = sortConfig;
+        if (a[key]! < b[key]!) return direction === 'asc' ? -1 : 1;
+        if (a[key]! > b[key]!) return direction === 'asc' ? 1 : -1;
+        return 0;
+    });
 
     if (loading) {
         return (
             <DashboardLayout>
-                <div className="flex h-full items-center justify-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                <div className="flex h-full items-center justify-center bg-black">
+                    <Loader2 className="h-8 w-8 animate-spin text-white" />
                 </div>
             </DashboardLayout>
         );
@@ -100,130 +87,123 @@ export default function LeaderboardPage() {
 
     return (
         <DashboardLayout>
-            <div className="h-full p-8 bg-black">
-                <div className="mx-auto max-w-6xl space-y-8">
+            <div className="min-h-screen bg-black text-white p-6 md:p-12 bg-mesh overflow-y-auto">
+                <div className="max-w-6xl mx-auto space-y-12">
+
                     {/* Header */}
-                    <div className="text-center">
-                        <h1 className="text-4xl font-bold tracking-tight text-white">Ultra Leaderboard</h1>
-                        <p className="mt-3 text-lg text-muted-foreground">
-                            Global rankings for the world's most ambitious students.
-                        </p>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="space-y-2"
+                        >
+                            <div className="flex items-center gap-3 text-zinc-500 font-black uppercase tracking-[0.2em] text-xs">
+                                <Sparkles className="h-4 w-4" /> Global Competition
+                            </div>
+                            <h1 className="text-6xl md:text-7xl font-black tracking-tighter">Leaderboard</h1>
+                        </motion.div>
+
+                        <div className="relative w-full md:w-96 group">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500 group-focus-within:text-white transition-colors" />
+                            <input
+                                type="text"
+                                placeholder="Search by name or school..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full bg-zinc-900 border-none rounded-full py-5 pl-14 pr-6 text-sm font-bold placeholder:text-zinc-600 focus:ring-2 focus:ring-white/10 outline-none transition-all shadow-xl"
+                            />
+                        </div>
                     </div>
 
-                    {/* Search and Filters */}
-                    <Card className="bg-zinc-900 border-zinc-800">
-                        <CardContent className="pt-6">
-                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                <div className="relative flex-1">
-                                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                                    <Input
-                                        placeholder="Search by name, school, or highlight..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        className="pl-9 bg-zinc-950 border-zinc-800"
-                                    />
-                                </div>
-                                <Button
-                                    variant="outline"
-                                    onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                                    className="flex items-center gap-2 border-zinc-800"
-                                >
-                                    {sortOrder === 'desc' ? (
-                                        <>
-                                            <TrendingDown className="h-4 w-4" />
-                                            Sort Ascending
-                                        </>
-                                    ) : (
-                                        <>
-                                            <TrendingUp className="h-4 w-4" />
-                                            Sort Descending (ELO)
-                                        </>
+                    {/* Top 3 Podiums */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {filteredLeaderboard.slice(0, 3).map((entry, i) => {
+                            const isGold = i === 0;
+                            const isSilver = i === 1;
+                            const isBronze = i === 2;
+                            return (
+                                <motion.div
+                                    key={entry.id}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: i * 0.1 }}
+                                    className={cn(
+                                        "glass-card p-10 relative flex flex-col items-center text-center group transition-all",
+                                        isGold ? "border-yellow-500/20 bg-yellow-500/5" : "",
+                                        isSilver ? "border-zinc-400/20" : "",
+                                        isBronze ? "border-orange-500/20 bg-orange-500/5" : ""
                                     )}
-                                </Button>
+                                >
+                                    <div className="absolute top-6 left-6 text-zinc-700 font-black text-4xl">#{i + 1}</div>
+
+                                    <div className="relative mb-6">
+                                        <div className={cn(
+                                            "h-24 w-24 rounded-full flex items-center justify-center font-black text-3xl border-4",
+                                            isGold ? "border-yellow-500 text-yellow-500" : "border-zinc-800 text-zinc-300"
+                                        )}>
+                                            {entry.name?.[0]}
+                                        </div>
+                                        {isGold && <Crown className="absolute -top-6 left-1/2 -translate-x-1/2 h-10 w-10 text-yellow-500 fill-yellow-500" />}
+                                    </div>
+
+                                    <h3 className="text-2xl font-black tracking-tight mb-1">{entry.name}</h3>
+                                    <p className="text-zinc-500 font-bold text-sm mb-6 flex items-center justify-center gap-1">
+                                        <School className="h-3 w-3" /> {entry.school || 'Unlisted School'}
+                                    </p>
+
+                                    <div className="bg-white text-black px-6 py-2 rounded-full font-black text-xl tracking-tighter">
+                                        {entry.elo} <span className="text-[10px] uppercase ml-1 opacity-60">ELO</span>
+                                    </div>
+                                </motion.div>
+                            )
+                        })}
+                    </div>
+
+                    {/* Full List */}
+                    <div className="glass-card overflow-hidden">
+                        <div className="grid grid-cols-12 gap-4 border-b border-white/5 p-8 text-xs font-black uppercase tracking-widest text-zinc-500">
+                            <div className="col-span-1">Rank</div>
+                            <div className="col-span-5 cursor-pointer hover:text-white transition-colors flex items-center gap-1" onClick={() => handleSort('name')}>
+                                Student {sortConfig.key === 'name' && (sortConfig.direction === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />)}
                             </div>
-                        </CardContent>
-                    </Card>
+                            <div className="col-span-4 cursor-pointer hover:text-white transition-colors flex items-center gap-1" onClick={() => handleSort('school')}>
+                                School {sortConfig.key === 'school' && (sortConfig.direction === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />)}
+                            </div>
+                            <div className="col-span-2 text-right cursor-pointer hover:text-white transition-colors flex items-center gap-1 justify-end" onClick={() => handleSort('elo')}>
+                                ELO {sortConfig.key === 'elo' && (sortConfig.direction === 'asc' ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />)}
+                            </div>
+                        </div>
 
-                    {/* Leaderboard Table */}
-                    <Card className="bg-zinc-900 border-zinc-800">
-                        <CardHeader>
-                            <CardTitle className="text-white">Student Rankings</CardTitle>
-                            <CardDescription>
-                                Compete with peers by logging accomplishments
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="space-y-1">
-                                {/* Header Row */}
-                                <div className="grid grid-cols-[80px_1fr_150px_200px] gap-4 border-b border-zinc-800 pb-3 text-sm font-medium text-muted-foreground px-4">
-                                    <div>RANK</div>
-                                    <div>NAME</div>
-                                    <div>ELO SCORE</div>
-                                    <div>SCHOOL</div>
-                                </div>
-
-                                {/* Leaderboard Entries */}
-                                {filteredLeaderboard.map((entry) => (
-                                    <div
-                                        key={entry.id}
-                                        className={cn(
-                                            'grid grid-cols-[80px_1fr_150px_200px] gap-4 rounded-lg border border-zinc-800 p-4 transition-colors hover:bg-zinc-800/50 items-center',
-                                            entry.rank <= 3 && 'bg-zinc-800/30'
-                                        )}
-                                    >
-                                        {/* Rank */}
-                                        <div className="flex items-center">
-                                            <Badge
-                                                className={cn(
-                                                    'flex h-10 w-10 items-center justify-center rounded-full text-md font-bold',
-                                                    getRankBadge(entry.rank)
-                                                )}
-                                            >
-                                                {entry.rank}
-                                            </Badge>
+                        <div className="divide-y divide-white/5">
+                            {filteredLeaderboard.map((entry, i) => (
+                                <motion.div
+                                    key={entry.id}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    className="grid grid-cols-12 gap-4 p-8 items-center group hover:bg-white/[0.02] transition-colors"
+                                >
+                                    <div className="col-span-1 font-black text-xl text-zinc-600">#{entry.rank}</div>
+                                    <div className="col-span-5 flex items-center gap-4">
+                                        <div className="h-10 w-10 rounded-full bg-zinc-900 flex items-center justify-center font-bold text-sm border border-white/5">
+                                            {entry.name?.[0]}
                                         </div>
-
-                                        {/* Name & Avatar */}
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="h-10 w-10 border border-zinc-800">
-                                                <AvatarImage src={entry.avatar_url} />
-                                                <AvatarFallback className="bg-zinc-800 text-zinc-400">
-                                                    {entry.name
-                                                        ? entry.name.split(' ').map((n) => n[0]).join('')
-                                                        : '?'}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <div>
-                                                <p className="font-medium text-zinc-100">{entry.name || 'Anonymous'}</p>
-                                                <p className="text-xs text-muted-foreground">{entry.grade || 'Student'}</p>
-                                            </div>
-                                        </div>
-
-                                        {/* ELO Score */}
-                                        <div className="flex items-center">
-                                            <div className="flex items-center gap-2">
-                                                {getRankIcon(entry.rank)}
-                                                <span className="text-xl font-bold text-white tracking-tight">{entry.elo}</span>
-                                            </div>
-                                        </div>
-
-                                        {/* School */}
-                                        <div className="flex items-center">
-                                            <p className="text-sm text-muted-foreground line-clamp-1">
-                                                {entry.school || 'Unspecified'}
-                                            </p>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-lg tracking-tight group-hover:text-white transition-colors">{entry.name}</span>
+                                            {entry.highlight && <span className="text-xs text-zinc-500 font-medium italic">{entry.highlight}</span>}
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-
-                            {filteredLeaderboard.length === 0 && (
-                                <div className="py-12 text-center text-muted-foreground font-medium">
-                                    No students found.
-                                </div>
-                            )}
-                        </CardContent>
-                    </Card>
+                                    <div className="col-span-4 text-zinc-500 font-bold text-sm">
+                                        {entry.school || '--'}
+                                    </div>
+                                    <div className="col-span-2 text-right">
+                                        <div className="inline-flex items-center gap-1 bg-white/5 px-4 py-2 rounded-full font-black text-lg">
+                                            {entry.elo} <Star className="h-3 w-3 text-white fill-white" />
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </DashboardLayout>

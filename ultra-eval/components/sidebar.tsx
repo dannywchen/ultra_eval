@@ -10,6 +10,7 @@ import {
     User,
     LogOut,
 } from 'lucide-react';
+import { getSupabase } from '@/lib/supabase';
 
 interface SidebarProps {
     className?: string;
@@ -39,21 +40,21 @@ export function Sidebar({ className }: SidebarProps) {
     return (
         <div
             className={cn(
-                'flex h-screen w-64 flex-col border-r border-border bg-card',
+                'flex h-screen w-64 flex-col border-r border-white/5 bg-black p-6',
                 className
             )}
         >
             {/* Logo */}
-            <div className="flex h-16 items-center border-b border-border px-6">
+            <div className="flex h-16 items-center px-4 mb-8">
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="text-2xl font-bold tracking-tight">
-                        Ultra<span className="text-xs align-super text-muted-foreground">(beta)</span>
+                    <div className="text-2xl font-bold tracking-tighter text-white">
+                        Ultra<span className="text-[10px] ml-1 font-bold bg-white text-black px-2 py-0.5 rounded-full uppercase">eval</span>
                     </div>
                 </Link>
             </div>
 
             {/* Navigation */}
-            <nav className="flex-1 space-y-1 p-4">
+            <nav className="flex-1 space-y-2">
                 {navigation.map((item) => {
                     const isActive = pathname === item.href;
                     return (
@@ -61,13 +62,13 @@ export function Sidebar({ className }: SidebarProps) {
                             key={item.name}
                             href={item.href}
                             className={cn(
-                                'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
+                                'flex items-center gap-3 rounded-full px-5 py-3 text-sm font-bold transition-all duration-200',
                                 isActive
-                                    ? 'bg-secondary text-foreground'
-                                    : 'text-muted-foreground hover:bg-secondary/50 hover:text-foreground'
+                                    ? 'bg-white text-black'
+                                    : 'text-zinc-500 hover:bg-white/5 hover:text-white'
                             )}
                         >
-                            <item.icon className="h-4 w-4" />
+                            <item.icon className={cn("h-4 w-4", isActive ? "text-black" : "text-zinc-500")} />
                             {item.name}
                         </Link>
                     );
@@ -75,9 +76,14 @@ export function Sidebar({ className }: SidebarProps) {
             </nav>
 
             {/* User section */}
-            <div className="border-t border-border p-4">
+            <div className="mt-auto pt-6 border-t border-white/5 font-bold">
                 <button
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground transition-all hover:bg-secondary/50 hover:text-foreground"
+                    className="flex w-full items-center gap-3 rounded-full px-5 py-3 text-sm text-zinc-500 transition-all duration-200 hover:bg-white/5 hover:text-white"
+                    onClick={async () => {
+                        const supabase = getSupabase();
+                        await supabase.auth.signOut();
+                        window.location.href = '/login';
+                    }}
                 >
                     <LogOut className="h-4 w-4" />
                     Sign Out

@@ -44,6 +44,7 @@ export interface Student {
     updated_at: string;
 }
 
+// Report table schema needs to be updated to match the other schema for consistency
 export interface Report {
     id: string;
     student_id: string;
@@ -58,6 +59,7 @@ export interface Report {
     graded_at?: string;
 }
 
+// LBentry does NOT work yet.
 export interface LeaderboardEntry extends Student {
     rank: number;
     highlight?: string;
