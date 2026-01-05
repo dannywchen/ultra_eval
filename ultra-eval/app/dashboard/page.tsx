@@ -14,7 +14,9 @@ import {
     CheckCircle2,
     Sparkles,
     LayoutDashboard,
-    ArrowUpRight
+    ArrowUpRight,
+    Share2,
+    Download
 } from 'lucide-react';
 import { getSupabase, Student, Report } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
@@ -32,6 +34,8 @@ export default function DashboardPage() {
     const [totalStudents, setTotalStudents] = useState<number>(0);
     const [rank, setRank] = useState<number | string>('--');
     const [loading, setLoading] = useState(true);
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [shareData, setShareData] = useState<Report | null>(null);
 
     useEffect(() => {
         fetchDashboardData();
@@ -102,6 +106,8 @@ export default function DashboardPage() {
         setEvaluationResult(null);
         setShowModal(false);
         setSelectedReport(null);
+        setShowShareModal(false);
+        setShareData(null);
     };
 
     if (loading) {
@@ -250,12 +256,24 @@ export default function DashboardPage() {
                                             </div>
                                         </div>
 
-                                        <button
-                                            onClick={resetForm}
-                                            className="w-full btn-3d btn-3d-primary py-5 text-xl"
-                                        >
-                                            Close Record
-                                        </button>
+                                        <div className="flex gap-4">
+                                            <button
+                                                onClick={() => {
+                                                    setShareData(selectedReport);
+                                                    setShowShareModal(true);
+                                                }}
+                                                className="flex-1 btn-3d btn-3d-dark py-4 text-lg flex items-center justify-center gap-2"
+                                            >
+                                                <Share2 className="h-5 w-5" />
+                                                Share Impact
+                                            </button>
+                                            <button
+                                                onClick={resetForm}
+                                                className="flex-1 btn-3d btn-3d-primary py-4 text-lg"
+                                            >
+                                                Close
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <>
@@ -343,23 +361,124 @@ export default function DashboardPage() {
                                                     <div className="text-6xl font-bold tracking-tighter">+{evaluationResult.elo_awarded}</div>
                                                 </div>
 
+                                                <div className="grid grid-cols-2 gap-4">
+                                                    {Object.entries(evaluationResult.category_score).map(([key, value]) => (
+                                                        <div key={key} className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                                            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{key}</div>
+                                                            <div className="text-xl font-bold">{value as number}/10</div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
                                                 <div className="space-y-4">
                                                     <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Ultra Eval Notes</h4>
-                                                    <div className="glass-card p-6 bg-white/[0.05] text-zinc-100 leading-relaxed font-semibold italic border-white/5 rounded-2xl">
-                                                        "{evaluationResult.feedback}"
+                                                    <div className="glass-card p-6 bg-white/[0.03] text-zinc-100 leading-relaxed font-medium border-white/5 rounded-2xl">
+                                                        {evaluationResult.feedback}
                                                     </div>
                                                 </div>
 
-                                                <button
-                                                    onClick={resetForm}
-                                                    className="w-full btn-3d btn-3d-primary py-5 text-xl"
-                                                >
-                                                    Got it
-                                                </button>
+                                                <div className="flex gap-4">
+                                                    <button
+                                                        onClick={() => {
+                                                            setShareData({
+                                                                ...evaluationResult,
+                                                                title: title,
+                                                                created_at: new Date().toISOString()
+                                                            } as any);
+                                                            setShowShareModal(true);
+                                                        }}
+                                                        className="flex-1 btn-3d btn-3d-dark py-4 text-lg flex items-center justify-center gap-2"
+                                                    >
+                                                        <Share2 className="h-5 w-5" />
+                                                        Share
+                                                    </button>
+                                                    <button
+                                                        onClick={resetForm}
+                                                        className="flex-1 btn-3d btn-3d-primary py-4 text-lg"
+                                                    >
+                                                        Got it
+                                                    </button>
+                                                </div>
                                             </motion.div>
                                         )}
                                     </>
                                 )}
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
+
+                {/* Share Modal */}
+                <AnimatePresence>
+                    {showShareModal && shareData && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                onClick={() => setShowShareModal(false)}
+                                className="absolute inset-0 bg-black/90 backdrop-blur-xl"
+                            />
+
+                            <motion.div
+                                initial={{ scale: 0.9, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                exit={{ scale: 0.9, opacity: 0 }}
+                                className="relative w-full max-w-sm"
+                            >
+                                {/* Shareable Card */}
+                                <div id="share-card" className="bg-black border border-white/10 rounded-[2.5rem] overflow-hidden p-8 space-y-8 shadow-2xl relative">
+                                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                                        <Sparkles className="h-24 w-24 text-white" />
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="text-xl font-bold tracking-tighter">
+                                            Ultra<span className="text-[10px] ml-1 bg-white text-black px-2 py-0.5 rounded-full uppercase">eval</span>
+                                        </div>
+                                        <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Verified Proof</div>
+                                    </div>
+
+                                    <div className="space-y-2 text-center py-4">
+                                        <div className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-2">Impact Score</div>
+                                        <div className="text-8xl font-bold tracking-tighter text-white">
+                                            +{shareData.elo_awarded}
+                                        </div>
+                                        <div className="text-xl font-bold tracking-tight text-white/90">{shareData.title}</div>
+                                    </div>
+
+                                    <div className="flex items-center gap-4 bg-white/5 p-4 rounded-3xl border border-white/5">
+                                        <div className="h-12 w-12 rounded-2xl bg-zinc-800 flex items-center justify-center text-xl font-bold">
+                                            {student?.name?.[0]}
+                                        </div>
+                                        <div>
+                                            <div className="text-sm font-bold text-white">{student?.name}</div>
+                                            <div className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{student?.school || 'Global Student'}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="text-center">
+                                        <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.2em]">Ranked on Ultra Protocol</p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 space-y-4">
+                                    <button
+                                        onClick={() => {
+                                            // Mock copy functionality
+                                            alert("Link copied to clipboard!");
+                                        }}
+                                        className="w-full btn-3d btn-3d-primary py-4 text-lg font-bold"
+                                    >
+                                        Copy Share Link
+                                    </button>
+                                    <button
+                                        onClick={() => setShowShareModal(false)}
+                                        className="w-full text-zinc-500 font-bold text-sm hover:text-white transition-colors"
+                                    >
+                                        Dismiss
+                                    </button>
+                                </div>
                             </motion.div>
                         </div>
                     )}

@@ -270,7 +270,7 @@ export default function LeaderboardPage() {
                                             </div>
                                         </div>
                                         <div className="bg-white text-black px-8 py-3 rounded-full font-bold text-2xl tracking-tighter">
-                                            {selectedStudent.elo} <span className="text-xs uppercase ml-1 opacity-60 font-black">ELO</span>
+                                            {selectedStudent.elo} <span className="text-xs uppercase ml-1 opacity-60 font-bold">ELO</span>
                                         </div>
                                     </div>
 

@@ -48,24 +48,30 @@ STUDENT REPORT:
 **Description:** ${description}
 ${fileUrls && fileUrls.length > 0 ? `**Attached Files:** ${fileUrls.length} file(s)` : ''}
 
+CRITICAL CONSTRAINTS:
+1. **NO EM DASHES**: Do not use the em dash character (-). Use regular hyphens (-) or colons instead.
+2. **COMPLIMENT**: You MUST include a professional compliment about the user's progress or the specific achievement.
+3. **DETAIL**: Explain exactly why the ELO was awarded by referencing the scores in Impact, Productivity, Quality, and Relevance. Break it down so the user understands the value of their work.
+4. **FORMATTING**: Use clear, concise sentences. Avoid flowery language.
+
 GRADING CRITERIA:
-1. **Nonsense/Filler Check**: If the report is nonsensical, gibberish, clearly fake, or lacks any substance (e.g., "hi", "asdasd"), you MUST award **0 ELO**.
-2. **Impact (0-10)**: How much did this affect others or solve a hard problem?
-3. **Productivity (0-10)**: How much discipline/work ethic does this show?
-4. **Quality (0-10)**: Complexity and documentation quality.
-5. **Relevance (0-10)**: Alignment with professional or academic growth.
+1. **Nonsense/Filler Check**: If the report is nonsensical, gibberish, or lacks substance, you MUST award **0 ELO**.
+2. **Impact (0-10)**: Real-world effect or problem-solving scale.
+3. **Productivity (0-10)**: Discipline and effort demonstrated.
+4. **Quality (0-10)**: Complexity and execution.
+5. **Relevance (0-10)**: Academic or professional growth alignment.
 
 ELO CALCULATION (0-100):
-- **Nonsense/Troll Input**: 0 ELO
-- **Low Impact (1-3)**: 1-30 ELO (Minor tasks, chores, daily habits)
-- **Medium Impact (4-6)**: 31-60 ELO (Significant school projects, leadership roles, regional awards)
-- **High Impact (7-9)**: 61-90 ELO (National recognition, high-scale community impact, published research)
-- **Exceptional (10)**: 91-100 ELO (International olympiads, venture-backed startups, world-class excellence)
+- 0: Nonsense or invalid input.
+- 1-30: Minor tasks or daily habits.
+- 31-60: Significant projects or local recognition.
+- 61-90: High-scale impact or national recognition.
+- 91-100: Exceptional, world-class excellence.
 
 Provide your response in the following JSON format:
 {
   "elo_awarded": <number 0-100>,
-  "feedback": "<concise, direct, and professional feedback>",
+  "feedback": "<detailed analysis with compliment, ensuring no em dashes>",
   "category_score": {
     "impact": <number 0-10>,
     "productivity": <number 0-10>,
