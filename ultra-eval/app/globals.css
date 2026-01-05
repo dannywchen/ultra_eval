@@ -56,8 +56,8 @@
   --ultra-text: #F5F5F5;
   --ultra-muted: #888888;
 
-  /* Radius - More Bubbly */
-  --radius: 2rem;
+  /* Radius - More Slim/Professional */
+  --radius: 1.5rem;
 
   /* Theme colors - Deep Dark */
   --background: #000000;
@@ -98,21 +98,21 @@
   h4,
   h5,
   h6 {
-    font-weight: 600;
-    letter-spacing: -0.03em;
+    font-weight: 500;
+    letter-spacing: -0.04em;
   }
 }
 
 @layer components {
 
-  /* 3D Sleek Buttons */
+  /* 3D Slim Buttons */
   .btn-3d {
-    @apply inline-flex items-center justify-center rounded-full px-6 py-3 font-medium transition-all duration-150 active:translate-y-0.5 disabled:opacity-50;
+    @apply inline-flex items-center justify-center rounded-2xl px-5 py-2.5 font-semibold text-sm tracking-tight transition-all duration-150 active:translate-y-0.5 disabled:opacity-50;
   }
 
   .btn-3d-primary {
     @apply bg-white text-black;
-    box-shadow: 0 4px 0 #e4e4e7;
+    box-shadow: 0 2px 0 #e4e4e7;
   }
 
   .btn-3d-primary:hover {
@@ -125,7 +125,7 @@
 
   .btn-3d-dark {
     @apply bg-zinc-900 text-white border border-white/5;
-    box-shadow: 0 4px 0 #000000;
+    box-shadow: 0 2px 0 #000000;
   }
 
   .btn-3d-dark:hover {
@@ -137,7 +137,7 @@
   }
 
   .btn-3d-ghost {
-    @apply text-white hover:bg-white/5;
+    @apply text-white/70 hover:text-white hover:bg-white/5;
   }
 
   /* Glassmorphism Card */

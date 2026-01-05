@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { evaluateReport, generateEmailResponse } from '@/lib/openai';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
     try {
@@ -17,7 +20,7 @@ export async function POST(request: NextRequest) {
 
         const supabase = getSupabaseAdmin();
 
-        // Get student info
+        // Get student info including email
         const { data: student, error: studentError } = await supabase
             .from('students')
             .select('*')
@@ -78,16 +81,21 @@ export async function POST(request: NextRequest) {
             console.error('Error updating student ELO:', updateError);
         }
 
-        // Generate email content (would be sent via email service in production)
-        const emailContent = generateEmailResponse(
-            student.name,
-            title,
-            evaluation
-        );
-
-        // In production, you would send this email here
-        // For now, we'll log it
-        console.log('Email would be sent:', emailContent);
+        // Send real email using Resend
+        try {
+            if (process.env.RESEND_API_KEY && student.email) {
+                await resend.emails.send({
+                    from: 'Ultra Eval <notifications@ultraeval.com>',
+                    to: student.email,
+                    subject: `+${evaluation.elo_awarded} ELO: "${title}" Graded`,
+                    html: generateEmailResponse(student.name, title, evaluation),
+                });
+            } else {
+                console.warn('RESEND_API_KEY or student email missing. Email not sent.');
+            }
+        } catch (emailError) {
+            console.error('Failed to send email:', emailError);
+        }
 
         return NextResponse.json({
             success: true,

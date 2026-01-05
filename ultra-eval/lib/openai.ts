@@ -134,51 +134,71 @@ export function generateEmailResponse(
 <html>
 <head>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 600px; margin: 0 auto; }
-    .header { background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 30px; text-align: center; }
-    .content { padding: 30px; background: #ffffff; }
-    .elo-badge { background: #4CAF50; color: white; padding: 10px 20px; border-radius: 20px; font-size: 24px; font-weight: bold; display: inline-block; margin: 20px 0; }
-    .scores { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-    .score-item { background: #f5f5f5; padding: 15px; border-radius: 8px; }
-    .feedback { background: #f9f9f9; border-left: 4px solid #4CAF50; padding: 20px; margin: 20px 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #000000; color: #ffffff; margin: 0; padding: 0; }
+    .container { max-width: 600px; margin: 40px auto; background-color: #0a0a0a; border: 1px solid #333; border-radius: 24px; overflow: hidden; }
+    .header { padding: 40px; text-align: center; border-bottom: 1px solid #333; }
+    .logo { font-size: 24px; font-weight: bold; letter-spacing: -1px; }
+    .badge { display: inline-block; background-color: #ffffff; color: #000000; padding: 4px 12px; border-radius: 100px; font-size: 10px; text-transform: uppercase; vertical-align: middle; margin-left: 8px; font-weight: 800; }
+    .content { padding: 40px; }
+    .elo-display { font-size: 72px; font-weight: 900; letter-spacing: -4px; margin: 20px 0; text-align: center; }
+    .title { font-size: 20px; font-weight: bold; text-align: center; color: #888; margin-bottom: 40px; }
+    .section-label { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; color: #555; margin-bottom: 12px; }
+    .feedback-box { background-color: #111; border-radius: 16px; padding: 24px; font-size: 16px; line-height: 1.6; color: #ccc; font-style: italic; margin-bottom: 32px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+    .grid-item { background-color: #111; border-radius: 16px; padding: 16px; }
+    .grid-label { font-size: 10px; font-weight: bold; text-transform: uppercase; color: #444; margin-bottom: 4px; }
+    .grid-value { font-size: 18px; font-weight: bold; }
+    .footer { padding: 40px; text-align: center; font-size: 12px; color: #444; border-top: 1px solid #333; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>Ultra Eval</h1>
-    <p>Your Report Has Been Evaluated</p>
-  </div>
-  <div class="content">
-    <h2>Hi ${studentName},</h2>
-    <p>Your report "<strong>${reportTitle}</strong>" has been evaluated by our AI system.</p>
-    
-    <div style="text-align: center;">
-      <div class="elo-badge">+${evaluation.elo_awarded} ELO</div>
+  <div class="container">
+    <div class="header">
+      <div class="logo">Ultra<span class="badge">eval</span></div>
     </div>
-    
-    <h3>Score Breakdown</h3>
-    <div class="scores">
-      <div class="score-item">
-        <strong>Impact:</strong> ${evaluation.category_score.impact}/10
-      </div>
-      <div class="score-item">
-        <strong>Productivity:</strong> ${evaluation.category_score.productivity}/10
-      </div>
-      <div class="score-item">
-        <strong>Quality:</strong> ${evaluation.category_score.quality}/10
-      </div>
-      <div class="score-item">
-        <strong>Relevance:</strong> ${evaluation.category_score.relevance}/10
+    <div class="content">
+      <div class="section-label" style="text-align: center;">Accomplishment Verified</div>
+      <div class="elo-display">+${evaluation.elo_awarded}</div>
+      <div class="title">${reportTitle}</div>
+      
+      <div class="section-label">Evaluation Notes</div>
+      <div class="feedback-box">"${evaluation.feedback}"</div>
+      
+      <div class="section-label">Performance Metrics</div>
+      <div class="grid" style="display: table; width: 100%;">
+        <div style="display: table-row;">
+          <div style="display: table-cell; padding: 8px;">
+            <div class="grid-item">
+              <div class="grid-label">Impact</div>
+              <div class="grid-value">${evaluation.category_score.impact}/10</div>
+            </div>
+          </div>
+          <div style="display: table-cell; padding: 8px;">
+            <div class="grid-item">
+              <div class="grid-label">Quality</div>
+              <div class="grid-value">${evaluation.category_score.quality}/10</div>
+            </div>
+          </div>
+        </div>
+        <div style="display: table-row;">
+          <div style="display: table-cell; padding: 8px;">
+            <div class="grid-item">
+              <div class="grid-label">Productivity</div>
+              <div class="grid-value">${evaluation.category_score.productivity}/10</div>
+            </div>
+          </div>
+          <div style="display: table-cell; padding: 8px;">
+            <div class="grid-item">
+              <div class="grid-label">Relevance</div>
+              <div class="grid-value">${evaluation.category_score.relevance}/10</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    
-    <div class="feedback">
-      <h3>Feedback</h3>
-      <p>${evaluation.feedback}</p>
+    <div class="footer">
+      This is a verified evaluation protocol. Issued to ${studentName}.
     </div>
-    
-    <p>Keep up the great work!</p>
-    <p><strong>The Ultra Eval Team</strong></p>
   </div>
 </body>
 </html>

@@ -66,8 +66,8 @@ export default function LoginPage() {
                     className="text-center space-y-4"
                 >
                     <Link href="/" className="inline-block">
-                        <h1 className="text-6xl font-bold tracking-tighter">
-                            Ultra<span className="text-[12px] ml-1 bg-white text-black px-3 py-1 rounded-full uppercase">eval</span>
+                        <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
+                            Ultra<span className="text-[10px] ml-1 bg-white text-black px-2 py-0.5 rounded-full uppercase">eval</span>
                         </h1>
                     </Link>
                     <p className="text-zinc-500 font-semibold text-lg max-w-sm mx-auto">
@@ -135,9 +135,9 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full btn-3d btn-3d-dark py-4 text-lg font-bold"
+                            className="w-full btn-3d btn-3d-dark py-3.5 text-base font-bold"
                         >
-                            {isLoading ? <Loader2 className="h-5 w-5 animate-spin mx-auto" /> : 'Sign In'}
+                            {isLoading ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Sign In'}
                         </button>
                     </form>
 

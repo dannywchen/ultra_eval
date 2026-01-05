@@ -136,7 +136,7 @@ export default function ProfilePage() {
                     {/* Hero Profile Section */}
                     <div className="flex flex-col md:flex-row items-center md:items-end gap-10">
                         <div className="relative group">
-                            <div className="h-40 w-40 rounded-3xl bg-zinc-900 border border-white/5 flex items-center justify-center font-bold text-6xl text-white shadow-2xl">
+                            <div className="h-32 w-32 rounded-3xl bg-zinc-900 border border-white/5 flex items-center justify-center font-bold text-5xl text-white shadow-2xl">
                                 {student?.name?.[0]}
                             </div>
                             <div className="absolute -bottom-2 -right-2 bg-white text-black p-2 rounded-xl shadow-xl">
@@ -146,7 +146,7 @@ export default function ProfilePage() {
 
                         <div className="flex-1 text-center md:text-left space-y-4">
                             <div className="space-y-1">
-                                <h1 className="text-5xl md:text-6xl font-bold tracking-tighter">
+                                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">
                                     {student?.name}
                                 </h1>
                                 <div className="flex flex-wrap justify-center md:justify-start gap-4 text-zinc-500 font-semibold text-sm uppercase tracking-widest leading-none">
@@ -181,9 +181,9 @@ export default function ProfilePage() {
                                 key={item.label}
                                 className="glass-card p-6 text-center md:text-left group border-white/5"
                             >
-                                <item.icon className="h-5 w-5 text-zinc-600 mb-2 group-hover:text-white transition-colors" />
-                                <div className="text-3xl font-bold tracking-tighter">{item.value}</div>
-                                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{item.label}</div>
+                                <item.icon className="h-4 w-4 text-zinc-600 mb-2 group-hover:text-white transition-colors" />
+                                <div className="text-2xl font-bold tracking-tighter">{item.value}</div>
+                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{item.label}</div>
                             </div>
                         ))}
                     </div>
@@ -213,9 +213,9 @@ export default function ProfilePage() {
                                                 <p className="text-zinc-500 font-medium max-w-2xl text-sm leading-relaxed">{report.description}</p>
                                             </div>
 
-                                            <div className="flex flex-col items-center md:items-end justify-center min-w-[120px]">
-                                                <div className="text-4xl font-bold text-white">+{report.elo_awarded}</div>
-                                                <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">ELO Issued</div>
+                                            <div className="flex flex-col items-center md:items-end justify-center min-w-[100px]">
+                                                <div className="text-3xl font-bold text-white">+{report.elo_awarded}</div>
+                                                <div className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">ELO Issued</div>
                                             </div>
                                         </div>
 

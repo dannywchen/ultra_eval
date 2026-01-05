@@ -269,7 +269,7 @@ export default function LeaderboardPage() {
                                                 {selectedStudent.grade && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Grade {selectedStudent.grade}</span>}
                                             </div>
                                         </div>
-                                        <div className="bg-white text-black px-8 py-3 rounded-full font-bold text-2xl tracking-tighter">
+                                        <div className="text-5xl font-bold tracking-tighter text-white mb-2">
                                             {selectedStudent.elo} <span className="text-xs uppercase ml-1 opacity-60 font-bold">ELO</span>
                                         </div>
                                     </div>
