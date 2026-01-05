@@ -40,36 +40,37 @@ export async function evaluateReport(
   category: string,
   fileUrls?: string[]
 ): Promise<EvaluationResult> {
-  const prompt = `You are an evaluator for Ultra Eval, a system that grades student accomplishments and awards them ELO points.
+  const prompt = `You are a high-level achievement evaluator for Ultra Eval. Your task is to analyze a student's reported accomplishment and assign an ELO score (0-100) based on its objective real-world impact.
 
-Evaluate the following student report:
-
+STUDENT REPORT:
 **Title:** ${title}
 **Category:** ${category}
 **Description:** ${description}
 ${fileUrls && fileUrls.length > 0 ? `**Attached Files:** ${fileUrls.length} file(s)` : ''}
 
-Rate the report on the following criteria (1-10 scale):
-1. **Impact**: How significant is this accomplishment?
-2. **Productivity**: How much effort/work does this demonstrate?
-3. **Quality**: How well is this presented and documented?
-4. **Relevance**: How relevant is this to academic/professional growth?
+GRADING CRITERIA:
+1. **Nonsense/Filler Check**: If the report is nonsensical, gibberish, clearly fake, or lacks any substance (e.g., "hi", "asdasd"), you MUST award **0 ELO**.
+2. **Impact (0-10)**: How much did this affect others or solve a hard problem?
+3. **Productivity (0-10)**: How much discipline/work ethic does this show?
+4. **Quality (0-10)**: Complexity and documentation quality.
+5. **Relevance (0-10)**: Alignment with professional or academic growth.
 
-Based on these criteria, calculate an ELO award (can be any number ranging from 0 to 100, does not have to end with 0 or 5)
-- Low Impact (1-3): 0-30 ELO
-- Medium Impact (4-6): 31-60 ELO
-- High Impact (7-9): 61-90 ELO
-- Exceptional Impact (10): 91-100 ELO
+ELO CALCULATION (0-100):
+- **Nonsense/Troll Input**: 0 ELO
+- **Low Impact (1-3)**: 1-30 ELO (Minor tasks, chores, daily habits)
+- **Medium Impact (4-6)**: 31-60 ELO (Significant school projects, leadership roles, regional awards)
+- **High Impact (7-9)**: 61-90 ELO (National recognition, high-scale community impact, published research)
+- **Exceptional (10)**: 91-100 ELO (International olympiads, venture-backed startups, world-class excellence)
 
 Provide your response in the following JSON format:
 {
   "elo_awarded": <number 0-100>,
-  "feedback": "<constructive feedback string>",
+  "feedback": "<concise, direct, and professional feedback>",
   "category_score": {
-    "impact": <number 1-10>,
-    "productivity": <number 1-10>,
-    "quality": <number 1-10>,
-    "relevance": <number 1-10>
+    "impact": <number 0-10>,
+    "productivity": <number 0-10>,
+    "quality": <number 0-10>,
+    "relevance": <number 0-10>
   }
 }`;
 
@@ -81,14 +82,13 @@ Provide your response in the following JSON format:
         {
           role: 'system',
           content:
-            'You are an expert evaluator for high-achieving students. Provide meticulous, professional feedback and assign ELO scores between 0 and 100 based on impact.',
+            'You are a strict, fair achievement evaluator. If a report is garbage or nonsense, reward 0 ELO. Otherwise, award 0-100 based on impact.',
         },
         {
           role: 'user',
           content: prompt,
         },
       ],
-      temperature: 0.3,
       response_format: { type: 'json_object' },
     });
 
@@ -98,24 +98,15 @@ Provide your response in the following JSON format:
     }
 
     const result = JSON.parse(responseContent) as EvaluationResult;
-
-    // Ensure ELO is within the 0-100 bounds requested
     result.elo_awarded = Math.max(0, Math.min(100, result.elo_awarded));
 
     return result;
   } catch (error) {
     console.error('OpenAI evaluation error:', error);
-    // Return a default evaluation in case of error
     return {
-      elo_awarded: 5,
-      feedback:
-        'Your report has been received. Please try to provide more details for a more accurate evaluation.',
-      category_score: {
-        impact: 2,
-        productivity: 2,
-        quality: 2,
-        relevance: 2,
-      },
+      elo_awarded: 0,
+      feedback: 'Evaluation failed. Please provide more significant details.',
+      category_score: { impact: 0, productivity: 0, quality: 0, relevance: 0 },
     };
   }
 }
