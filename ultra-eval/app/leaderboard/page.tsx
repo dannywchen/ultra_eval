@@ -46,10 +46,17 @@ export default function LeaderboardPage() {
         try {
             const supabase = getSupabase();
             const { data: { user } } = await supabase.auth.getUser();
-            setCurrentUserId(user?.id || null);
+
+            if (!user) {
+                window.location.href = '/login';
+                return;
+            }
+
+            setCurrentUserId(user.id);
             await fetchLeaderboard();
         } catch (error) {
             console.error('Error:', error);
+            window.location.href = '/login';
         }
     };
 

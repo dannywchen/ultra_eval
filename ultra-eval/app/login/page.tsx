@@ -51,7 +51,7 @@ export default function LoginPage() {
                         </div>
                     </Link>
                     <div className="pt-4 space-y-1">
-                        <h1 className="text-3xl font-semibold tracking-tight text-white">Welcome Back</h1>
+                        <h1 className="text-3xl font-semibold tracking-tight text-white">Create an account</h1>
                         <p className="text-zinc-500 text-[13px] font-medium">Sign in to access your Ultra Eval dashboard</p>
                     </div>
                 </motion.div>

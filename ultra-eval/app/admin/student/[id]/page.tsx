@@ -44,7 +44,7 @@ export default function StudentAdminDetail({ params }: { params: Promise<{ id: s
             const supabase = getSupabase();
             const { data: { session } } = await supabase.auth.getSession();
             const user = session?.user;
-            const adminEmails = ['dannywchen3@gmail.com', 'dannywchenofficial@gmail.com'];
+            const adminEmails = ['dannywchen3@gmail.com'];
 
             if (!user || !adminEmails.includes(user.email || '')) {
                 window.location.href = '/dashboard';

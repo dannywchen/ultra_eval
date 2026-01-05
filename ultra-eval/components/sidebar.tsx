@@ -26,7 +26,7 @@ export function Sidebar({ className }: SidebarProps) {
             const supabase = getSupabase();
             const { data: { session } } = await supabase.auth.getSession();
             const user = session?.user;
-            const adminEmails = ['dannywchen3@gmail.com', 'dannywchenofficial@gmail.com'];
+            const adminEmails = ['dannywchen3@gmail.com'];
             if (user?.email && adminEmails.includes(user.email)) {
                 setIsAdmin(true);
             }
