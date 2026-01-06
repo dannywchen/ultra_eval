@@ -51,17 +51,12 @@ export default function AdminDashboard() {
     const fetchStudents = async () => {
         try {
             const supabase = getSupabase();
-            const { data: { session } } = await supabase.auth.getSession();
+            const { data, error } = await supabase
+                .from('students')
+                .select('*')
+                .order('elo', { ascending: false });
 
-            const response = await fetch('/api/admin/students', {
-                headers: {
-                    'Authorization': `Bearer ${session?.access_token}`
-                }
-            });
-
-            if (!response.ok) throw new Error('Failed to fetch students');
-
-            const data = await response.json();
+            if (error) throw error;
             setStudents(data || []);
         } catch (error) {
             console.error('Error fetching students:', error);
