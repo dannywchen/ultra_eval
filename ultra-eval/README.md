@@ -185,14 +185,6 @@ The project uses Ultra's design aesthetic:
 - `status`: pending | graded | rejected
 - `created_at`, `graded_at`: Timestamps
 
-## 🔐 Security
-
-- Row Level Security (RLS) enabled in Supabase
-- Students can only view/edit their own data
-- API routes validate student ownership
-- Environment variables for sensitive keys
-- HTTPS required in production
-
 ## 🚢 Deployment
 
 ### Vercel (Recommended)
@@ -211,24 +203,7 @@ Make sure to add environment variables in Vercel dashboard.
 
 ## 📝 TODO / Future Enhancements
 
-- [ ] Implement Google OAuth authentication
-- [ ] Add file upload functionality (Supabase Storage)
-- [ ] Email service integration (SendGrid/Resend)
-- [ ] Real-time leaderboard updates (Supabase Realtime)
-- [ ] Admin dashboard for report moderation
-- [ ] Detailed analytics and charts
-- [ ] Mobile app (React Native)
-- [ ] Achievement badges system
-- [ ] Peer reviews and endorsements
 
-## 🤝 Contributing
 
-This is a private project. For questions or issues, contact the development team.
-
-## 📄 License
-
-Proprietary - All rights reserved
 
 ---
-
-Built with ❤️ by the Ultra team
