@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { evaluateReport, generateEmailResponse } from '@/lib/openai';
-import { getSupabaseAdmin } from '@/lib/supabase';
+import { getSupabaseAdmin, getSupabase } from '@/lib/supabase';
 import { sendGmail } from '@/lib/gmail';
 
 export async function POST(request: NextRequest) {
@@ -16,7 +16,27 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader) {
+            return NextResponse.json({ error: 'Missing authorization header' }, { status: 401 });
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error: authError } = await getSupabase().auth.getUser(token);
+
+        if (authError || !user) {
+            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
+        }
+
         const supabase = getSupabaseAdmin();
+
+        // Validate that the authenticated user matches the studentId being submitted for
+        if (user.id !== studentId) {
+            return NextResponse.json(
+                { error: 'Unauthorized: Student ID mismatch' },
+                { status: 403 }
+            );
+        }
 
         // Get student info including email
         const { data: student, error: studentError } = await supabase

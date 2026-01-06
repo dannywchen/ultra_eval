@@ -113,10 +113,17 @@ export default function DashboardPage() {
                 setIsUploading(false);
             }
 
+
             // 2. Submit report with file URLs
+            const supabase = getSupabase();
+            const { data: { session } } = await supabase.auth.getSession();
+
             const response = await fetch('/api/submit-report', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${session?.access_token}`
+                },
                 body: JSON.stringify({
                     title,
                     description,
