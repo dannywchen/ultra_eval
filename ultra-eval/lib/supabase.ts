@@ -54,6 +54,13 @@ export interface Report {
     file_urls?: string[];
     elo_awarded: number;
     ai_feedback?: string;
+    analysis_parts?: string[];
+    category_score?: {
+        impact: number;
+        productivity: number;
+        quality: number;
+        relevance: number;
+    };
     status: 'pending' | 'graded' | 'rejected';
     created_at: string;
     graded_at?: string;

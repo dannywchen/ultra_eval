@@ -200,7 +200,7 @@ export default function DashboardPage() {
                         ].map((stat, i) => (
                             <div
                                 key={i}
-                                className={cn("glass-card p-8 group transition-all cursor-default")}
+                                className={cn("glass-card p-8 group transition-all cursor-default card-3d")}
                             >
                                 <div className="flex items-center mb-4">
                                     <div className="p-3 rounded-2xl bg-white/5 flex items-center justify-center">
@@ -221,7 +221,7 @@ export default function DashboardPage() {
 
                         <div className="grid gap-4">
                             {reports.length === 0 ? (
-                                <div className="glass-card p-12 text-center text-zinc-500 font-semibold">
+                                <div className="glass-card p-12 text-center text-zinc-500 font-semibold card-3d">
                                     Your accomplishments will appear here. Start by submitting one!
                                 </div>
                             ) : (
@@ -229,7 +229,7 @@ export default function DashboardPage() {
                                     <div
                                         key={report.id}
                                         onClick={() => setSelectedReport(report)}
-                                        className="glass-card p-6 flex flex-col md:flex-row items-center gap-6 group hover:bg-zinc-900/50 transition-all cursor-pointer border-white/15"
+                                        className="glass-card p-6 flex flex-col md:flex-row items-center gap-6 group hover:bg-zinc-900/50 transition-all cursor-pointer border-white/15 card-3d"
                                     >
                                         <div className="bg-white text-black h-12 w-12 rounded-2xl flex items-center justify-center font-bold text-lg flex-shrink-0">
                                             +{report.elo_awarded}
@@ -273,39 +273,57 @@ export default function DashboardPage() {
                                 initial={{ scale: 0.95, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0.95, opacity: 0 }}
-                                className="relative w-full max-w-4xl glass-card border-white/10 shadow-3xl bg-zinc-950 p-8 md:p-12 overflow-hidden"
+                                className="relative w-full max-w-4xl glass-card border-white/10 shadow-3xl bg-zinc-950 p-8 md:p-12 overflow-hidden card-3d"
                             >
                                 <button onClick={resetForm} className="absolute top-8 right-8 text-zinc-600 hover:text-white transition-colors">
                                     <X className="h-6 w-6" />
                                 </button>
 
                                 {selectedReport ? (
-                                    <div className="py-6 space-y-8">
-                                        <div className="grid md:grid-cols-2 gap-12 text-left">
-                                            <div className="space-y-8">
-                                                <div className="space-y-4">
-                                                    <div className="inline-flex items-center justify-center h-12 w-12 rounded-xl bg-white text-black font-bold text-xl">
-                                                        +{selectedReport.elo_awarded}
-                                                    </div>
-                                                    <h3 className="text-2xl font-bold tracking-tighter leading-tight">{selectedReport.title}</h3>
-                                                    <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px]">{selectedReport.category} • {new Date(selectedReport.created_at).toLocaleDateString()}</p>
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="py-6 space-y-8"
+                                    >
+                                        <div className="text-left space-y-2 mb-8">
+                                            <h2 className="text-2xl font-semibold tracking-tighter">Submission Details</h2>
+                                            <p className="text-zinc-500 font-medium text-sm">Verified accomplishment from your activity feed.</p>
+                                        </div>
+
+                                        <div className="grid md:grid-cols-2 gap-10">
+                                            <div className="space-y-6">
+                                                <div className="glass-card bg-white p-8 text-black text-center rounded-[1.5rem] card-3d">
+                                                    <div className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">ELO Issued</div>
+                                                    <div className="text-5xl font-semibold tracking-tighter">+{selectedReport.elo_awarded}</div>
+                                                    <div className="text-sm font-bold mt-2 opacity-80">{selectedReport.title}</div>
                                                 </div>
+
+                                                {selectedReport.category_score && (
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        {Object.entries(selectedReport.category_score).map(([key, value]) => (
+                                                            <div key={key} className="bg-white/5 rounded-2xl p-4 border border-white/5 card-3d">
+                                                                <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{key}</div>
+                                                                <div className="text-xl font-semibold">{value as number}/10</div>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
 
                                                 <div className="space-y-4">
                                                     <h4 className="text-[10px] font-bold uppercase tracking-widest text-zinc-600">Impact Analysis</h4>
-                                                    <div className="glass-card p-6 bg-zinc-900/50 text-zinc-400 font-medium leading-relaxed rounded-2xl border-white/5">
+                                                    <div className="glass-card p-6 bg-zinc-900/50 text-zinc-400 font-medium leading-relaxed rounded-2xl border-white/5 card-3d">
                                                         {selectedReport.description}
                                                     </div>
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-8">
+                                            <div className="space-y-6">
                                                 <div className="space-y-4">
                                                     <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">Ultra Analysis</h4>
                                                     <div className="space-y-3">
-                                                        {formatAnalysis(selectedReport.ai_feedback || "").map((p, i) => (
-                                                            <div key={i} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium">
-                                                                {p}
+                                                        {(selectedReport.analysis_parts || formatAnalysis(selectedReport.ai_feedback || "")).map((part: string, idx: number) => (
+                                                            <div key={idx} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium card-3d">
+                                                                {part}
                                                             </div>
                                                         ))}
                                                     </div>
@@ -331,7 +349,7 @@ export default function DashboardPage() {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </motion.div>
                                 ) : (
                                     <>
                                         {!isSubmitting && !evaluationResult && (
@@ -345,7 +363,7 @@ export default function DashboardPage() {
                                                     <div className="space-y-2">
                                                         <input
                                                             placeholder="Short Title..."
-                                                            className="w-full bg-transparent text-2xl font-semibold tracking-tight placeholder:text-zinc-900 outline-none border-none"
+                                                            className="w-full bg-transparent text-2xl font-semibold tracking-tight placeholder:text-zinc-700 outline-none border-b border-white/10 pb-2 focus:border-white/30 transition-all"
                                                             value={title}
                                                             onChange={(e) => setTitle(e.target.value)}
                                                             required
@@ -386,7 +404,7 @@ export default function DashboardPage() {
 
                                                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                                             {selectedFiles.map((file, idx) => (
-                                                                <div key={idx} className="relative group aspect-square rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center p-2 text-center overflow-hidden">
+                                                                <div key={idx} className="relative group aspect-square rounded-2xl bg-white/5 border border-white/10 flex flex-col items-center justify-center p-2 text-center overflow-hidden card-3d">
                                                                     <FileIcon className="h-6 w-6 text-zinc-700 mb-1" />
                                                                     <span className="text-[8px] font-bold text-zinc-500 truncate w-full px-2">{file.name}</span>
                                                                     <button
@@ -450,14 +468,14 @@ export default function DashboardPage() {
 
                                                 <div className="grid md:grid-cols-2 gap-10">
                                                     <div className="space-y-6">
-                                                        <div className="glass-card bg-white p-8 text-black text-center rounded-[1.5rem]">
+                                                        <div className="glass-card bg-white p-8 text-black text-center rounded-[1.5rem] card-3d">
                                                             <div className="text-[10px] font-bold uppercase tracking-widest mb-1 opacity-50">ELO Issued</div>
                                                             <div className="text-5xl font-semibold tracking-tighter">+{evaluationResult.elo_awarded}</div>
                                                         </div>
 
                                                         <div className="grid grid-cols-2 gap-4">
                                                             {Object.entries(evaluationResult.category_score).map(([key, value]) => (
-                                                                <div key={key} className="bg-white/5 rounded-2xl p-4 border border-white/5">
+                                                                <div key={key} className="bg-white/5 rounded-2xl p-4 border border-white/5 card-3d">
                                                                     <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-1">{key}</div>
                                                                     <div className="text-xl font-semibold">{value as number}/10</div>
                                                                 </div>
@@ -470,7 +488,7 @@ export default function DashboardPage() {
                                                             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-600">Ultra Analysis</h4>
                                                             <div className="space-y-3">
                                                                 {(evaluationResult.analysis_parts || formatAnalysis(evaluationResult.feedback)).map((part: string, idx: number) => (
-                                                                    <div key={idx} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium">
+                                                                    <div key={idx} className="glass-card p-4 bg-white/[0.02] text-zinc-300 text-[13px] leading-relaxed border-white/10 rounded-xl font-medium card-3d">
                                                                         {part}
                                                                     </div>
                                                                 ))}

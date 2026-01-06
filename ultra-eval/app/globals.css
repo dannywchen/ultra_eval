@@ -150,6 +150,10 @@
   .input-bubbly {
     @apply bg-zinc-900/50 border-white/5 rounded-xl px-5 py-4 focus:border-white/10 transition-all outline-none text-white;
   }
+
+  .card-3d {
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
 }
 
 /* Background Gradients */

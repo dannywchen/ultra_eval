@@ -70,6 +70,8 @@ export async function POST(request: NextRequest) {
                 file_urls: fileUrls || [],
                 elo_awarded: evaluation.elo_awarded,
                 ai_feedback: evaluation.feedback,
+                analysis_parts: evaluation.analysis_parts,
+                category_score: evaluation.category_score,
                 status: 'graded',
                 graded_at: new Date().toISOString(),
             })

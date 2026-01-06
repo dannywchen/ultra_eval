@@ -131,100 +131,96 @@ export default function ProfilePage() {
     return (
         <DashboardLayout>
             <div className="min-h-screen bg-black text-white p-6 md:p-12 bg-mesh overflow-y-auto">
-                <div className="max-w-5xl mx-auto space-y-12">
+                <div className="max-w-3xl mx-auto space-y-10">
 
                     {/* Hero Profile Section */}
-                    <div className="flex flex-col md:flex-row items-center md:items-end gap-10">
-                        <div className="relative group">
-                            <div className="h-32 w-32 rounded-3xl bg-zinc-900 border border-white/5 flex items-center justify-center font-bold text-5xl text-white shadow-2xl">
+                    <div className="flex flex-col md:flex-row items-center md:items-end gap-8">
+                        <div className="relative">
+                            <div className="h-24 w-24 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center font-bold text-4xl text-white shadow-2xl card-3d">
                                 {student?.name?.[0]}
                             </div>
-                            <div className="absolute -bottom-2 -right-2 bg-white text-black p-2 rounded-xl shadow-xl">
-                                <Zap className="h-5 w-5 fill-black" />
+                            <div className="absolute -bottom-1 -right-1 bg-white text-black p-1.5 rounded-lg shadow-xl">
+                                <Zap className="h-4 w-4 fill-black" />
                             </div>
                         </div>
 
-                        <div className="flex-1 text-center md:text-left space-y-4">
-                            <div className="space-y-1">
-                                <h1 className="text-3xl font-semibold tracking-tighter">
+                        <div className="flex-1 text-center md:text-left space-y-3">
+                            <div className="space-y-0.5">
+                                <h1 className="text-2xl font-semibold tracking-tighter">
                                     {student?.name}
                                 </h1>
-                                <div className="flex flex-wrap justify-center md:justify-start gap-4 text-zinc-500 font-semibold text-sm uppercase tracking-widest leading-none">
-                                    <span className="flex items-center gap-1.5"><GraduationCap className="h-4 w-4" /> {student?.school || 'Unlisted Institution'}</span>
-                                    {student?.grade && <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Grade {student.grade}</span>}
+                                <div className="flex flex-wrap justify-center md:justify-start gap-3 text-zinc-500 font-semibold text-[12px] uppercase tracking-widest leading-none">
+                                    <span className="flex items-center gap-1.5"><GraduationCap className="h-3.5 w-3.5" /> {student?.school || 'Unlisted Institution'}</span>
+                                    {student?.grade && <span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" /> Grade {student.grade}</span>}
                                 </div>
                             </div>
 
-                            <div className="flex flex-wrap justify-center md:justify-start gap-4 pt-4">
+                            <div className="flex flex-wrap justify-center md:justify-start gap-3 pt-2">
                                 <button
                                     onClick={() => setIsEditing(true)}
-                                    className="btn-3d btn-3d-primary px-8 py-2.5 text-sm"
+                                    className="btn-3d btn-3d-primary px-6 py-2 text-[12px]"
                                 >
                                     Edit Profile
-                                </button>
-                                <button className="btn-3d btn-3d-dark px-10 py-2.5 text-sm flex items-center gap-2">
-                                    Share <ExternalLink className="h-4 w-4" />
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     {/* Stats Highlights */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-3 gap-4">
                         {[
                             { label: 'ELO Score', value: student?.elo || 0, icon: TrendingUp },
                             { label: 'Achievements', value: reports.length, icon: Award },
                             { label: 'Global Rank', value: `#${rank}`, icon: Zap },
-                            { label: 'Registry Size', value: totalStudents, icon: MapPin },
                         ].map((item, i) => (
                             <div
                                 key={item.label}
-                                className="glass-card p-6 text-center md:text-left group border-white/5"
+                                className="glass-card p-5 text-center md:text-left border-white/5 card-3d"
                             >
-                                <item.icon className="h-4 w-4 text-zinc-600 mb-2 group-hover:text-white transition-colors" />
-                                <div className="text-2xl font-bold tracking-tighter">{item.value}</div>
-                                <div className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 mt-1">{item.label}</div>
+                                <item.icon className="h-3.5 w-3.5 text-zinc-600 mb-1.5 transition-colors" />
+                                <div className="text-xl font-bold tracking-tighter">{item.value}</div>
+                                <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600 mt-0.5">{item.label}</div>
                             </div>
                         ))}
                     </div>
 
                     {/* Portfolio / Achievements */}
-                    <div className="space-y-8">
-                        <h2 className="text-3xl font-bold tracking-tighter underline decoration-white/10 underline-offset-8">Accomplishments</h2>
+                    <div className="space-y-6">
+                        <h2 className="text-2xl font-bold tracking-tighter underline decoration-white/10 underline-offset-8">Accomplishments</h2>
 
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             {reports.length === 0 ? (
-                                <div className="glass-card p-12 text-center text-zinc-500 font-semibold border-white/5">
+                                <div className="glass-card p-10 text-center text-zinc-500 font-semibold border-white/5 card-3d">
                                     No accomplishments verified yet. Start your journey on the Dashboard.
                                 </div>
                             ) : (
                                 reports.map((report, i) => (
                                     <div
                                         key={report.id}
-                                        className="glass-card p-8 group hover:bg-zinc-900/50 transition-all border-white/5"
+                                        className="glass-card p-6 border-white/5 card-3d"
                                     >
-                                        <div className="flex flex-col md:flex-row justify-between gap-6">
-                                            <div className="space-y-3">
-                                                <div className="flex items-center gap-3">
-                                                    <span className="bg-white text-black text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest leading-none">{report.category}</span>
-                                                    <span className="text-zinc-600 text-[10px] font-bold">{new Date(report.created_at).toLocaleDateString()}</span>
+                                        <div className="flex flex-col md:flex-row justify-between gap-4">
+                                            <div className="space-y-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="bg-white text-black text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest leading-none">{report.category}</span>
+                                                    <span className="text-zinc-600 text-[9px] font-bold">{new Date(report.created_at).toLocaleDateString()}</span>
                                                 </div>
-                                                <h3 className="text-2xl font-semibold tracking-tight leading-tight">{report.title}</h3>
-                                                <p className="text-zinc-500 font-medium max-w-2xl text-sm leading-relaxed">{report.description}</p>
+                                                <h3 className="text-lg font-semibold tracking-tight leading-tight">{report.title}</h3>
+                                                <p className="text-zinc-500 font-medium max-w-xl text-[13px] leading-relaxed">{report.description}</p>
                                             </div>
 
-                                            <div className="flex flex-col items-center md:items-end justify-center min-w-[100px]">
-                                                <div className="text-3xl font-bold text-white">+{report.elo_awarded}</div>
-                                                <div className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest">ELO Issued</div>
+                                            <div className="flex flex-col items-center md:items-end justify-center min-w-[80px]">
+                                                <div className="text-2xl font-bold text-white">+{report.elo_awarded}</div>
+                                                <div className="text-[8px] font-bold text-zinc-600 uppercase tracking-widest">ELO Issued</div>
                                             </div>
                                         </div>
 
                                         {report.ai_feedback && (
-                                            <div className="mt-8 pt-6 border-t border-white/5">
-                                                <div className="flex items-center gap-2 mb-2 text-zinc-600">
-                                                    <span className="text-[9px] font-semibold uppercase tracking-widest text-zinc-500">Ultra Eval Notes</span>
+                                            <div className="mt-6 pt-4 border-t border-white/5">
+                                                <div className="flex items-center gap-2 mb-1.5 text-zinc-600">
+                                                    <span className="text-[8px] font-semibold uppercase tracking-widest text-zinc-500">Ultra Eval Notes</span>
                                                 </div>
-                                                <p className="text-sm font-semibold text-zinc-400 italic">
+                                                <p className="text-[12px] font-semibold text-zinc-400 italic">
                                                     "{report.ai_feedback}"
                                                 </p>
                                             </div>

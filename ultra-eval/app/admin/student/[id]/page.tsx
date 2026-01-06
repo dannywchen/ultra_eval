@@ -160,13 +160,15 @@ export default function StudentAdminDetail({ params }: { params: Promise<{ id: s
     return (
         <DashboardLayout>
             <div className="min-h-screen bg-black text-white p-6 md:p-12 bg-mesh overflow-y-auto">
-                <div className="max-w-5xl mx-auto space-y-12 pb-24">
+                <div className="max-w-4xl mx-auto space-y-10 pb-24">
 
                     {/* Navigation */}
                     <div className="flex items-center justify-between">
-                        <Link href="/admin" className="inline-flex items-center gap-2 text-zinc-500 hover:text-white transition-colors group">
-                            <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-                            <span className="font-bold uppercase tracking-widest text-[10px]">Back to Console</span>
+                        <Link href="/admin">
+                            <button className="btn-3d btn-3d-dark px-6 py-2 flex items-center gap-2 group">
+                                <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-1 transition-transform" />
+                                <span className="text-[11px] font-bold uppercase tracking-widest">Go Back</span>
+                            </button>
                         </Link>
 
                         <div className="flex items-center gap-3">
@@ -190,124 +192,117 @@ export default function StudentAdminDetail({ params }: { params: Promise<{ id: s
                     </div>
 
                     {/* Profile Header */}
-                    <div className="grid md:grid-cols-[1fr_350px] gap-12 items-start">
+                    <div className="grid md:grid-cols-[1fr_300px] gap-8 items-start">
                         <div className="space-y-6">
-                            <div className="space-y-2">
-                                <h1 className="text-4xl md:text-5xl font-bold tracking-tighter">{student?.name}</h1>
-                                <p className="text-zinc-600 font-bold uppercase tracking-widest text-xs flex items-center gap-2">
+                            <div className="space-y-1">
+                                <h1 className="text-4xl font-bold tracking-tighter">{student?.name}</h1>
+                                <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px] flex items-center gap-2">
                                     <Shield className="h-3 w-3" />
-                                    User ID: {student?.id.slice(0, 8)} • {student?.email}
+                                    {student?.email} • {student?.school || 'No School'}
                                 </p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="glass-card p-6 border-white/5 bg-zinc-900/30">
-                                    <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mb-1">Submissions</div>
-                                    <div className="text-3xl font-bold tracking-tighter">{reports.length}</div>
+                                <div className="glass-card p-5 border-white/5 card-3d">
+                                    <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600 mb-1">Total Submissions</div>
+                                    <div className="text-2xl font-bold tracking-tighter">{reports.length}</div>
                                 </div>
-                                <div className="glass-card p-6 border-white/5 bg-zinc-900/30">
-                                    <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-600 mb-1">Joined</div>
-                                    <div className="text-xl font-bold tracking-tighter">{new Date(student?.created_at || '').toLocaleDateString()}</div>
+                                <div className="glass-card p-5 border-white/5 card-3d">
+                                    <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600 mb-1">Member Since</div>
+                                    <div className="text-lg font-bold tracking-tighter">{new Date(student?.created_at || '').toLocaleDateString()}</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="glass-card p-8 bg-white text-black rounded-[2rem] space-y-6">
-                            <div className="text-center space-y-1">
-                                <div className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-40">Admin Action</div>
-                                <h3 className="text-2xl font-bold tracking-tighter">Edit Total ELO</h3>
+                        <div className="glass-card p-6 border-white/5 card-3d space-y-4">
+                            <div className="space-y-0.5">
+                                <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-600">Total ELO</div>
+                                <h3 className="text-xl font-bold tracking-tighter">Adjust Score</h3>
                             </div>
 
-                            <div className="space-y-4">
-                                <div className="relative">
-                                    <input
-                                        type="number"
-                                        className="w-full bg-black/5 rounded-2xl py-6 text-center text-5xl font-black italic tracking-tighter outline-none"
-                                        value={editElo}
-                                        onChange={(e) => setEditElo(e.target.value)}
-                                    />
-                                    <Plus className="absolute left-6 top-1/2 -translate-y-1/2 h-8 w-8 opacity-10" />
-                                </div>
-
+                            <div className="space-y-3">
+                                <input
+                                    type="number"
+                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 text-center text-3xl font-bold outline-none focus:border-white/20 transition-all"
+                                    value={editElo}
+                                    onChange={(e) => setEditElo(e.target.value)}
+                                />
                                 <button
                                     onClick={handleUpdateTotalElo}
                                     disabled={isSaving}
-                                    className="w-full btn-3d btn-3d-dark py-4 flex items-center justify-center gap-2 disabled:opacity-50"
+                                    className="w-full btn-3d btn-3d-primary py-2.5 flex items-center justify-center gap-2 disabled:opacity-50 text-[12px]"
                                 >
-                                    {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-                                    Save ELO
+                                    {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+                                    Update ELO
                                 </button>
                             </div>
                         </div>
                     </div>
 
                     {/* Submissions List */}
-                    <div className="space-y-8">
-                        <div className="flex items-center justify-between">
-                            <h2 className="text-2xl font-bold tracking-tighter uppercase flex items-center gap-3">
-                                <History className="h-5 w-5 text-zinc-600" />
-                                Submissions
-                            </h2>
-                        </div>
+                    <div className="space-y-6">
+                        <h2 className="text-xl font-bold tracking-tighter uppercase flex items-center gap-2 text-zinc-400">
+                            <History className="h-4 w-4" />
+                            Submissions
+                        </h2>
 
-                        <div className="grid gap-6">
+                        <div className="grid gap-4">
                             {reports.map((report) => (
                                 <div
                                     key={report.id}
-                                    className="glass-card p-8 border-white/5 bg-zinc-900/20 group hover:bg-zinc-900/40 transition-all font-medium"
+                                    className="glass-card p-6 border-white/5 card-3d"
                                 >
-                                    <div className="flex flex-col md:flex-row justify-between gap-8">
+                                    <div className="flex flex-col md:flex-row justify-between gap-6">
                                         <div className="space-y-4 flex-1">
                                             <div className="flex items-center gap-3">
-                                                <div className="bg-white text-black h-10 w-10 rounded-xl flex items-center justify-center font-black text-sm">
+                                                <div className="bg-white text-black h-10 w-10 rounded-xl flex items-center justify-center font-bold text-sm">
                                                     +{report.elo_awarded}
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-xl font-bold tracking-tight">{report.title}</h4>
-                                                    <p className="text-zinc-600 font-bold uppercase tracking-widest text-[10px]">
-                                                        {report.category} • {new Date(report.created_at).toLocaleString()}
+                                                    <h4 className="text-lg font-bold tracking-tight">{report.title}</h4>
+                                                    <p className="text-zinc-600 font-bold uppercase tracking-widest text-[9px]">
+                                                        {report.category} • {new Date(report.created_at).toLocaleDateString()}
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-4">
-                                                <div className="bg-black/40 rounded-2xl p-6 border border-white/5">
-                                                    <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-700 mb-2">Description</div>
-                                                    <p className="text-zinc-400 text-sm leading-relaxed">{report.description}</p>
+                                            <div className="grid md:grid-cols-2 gap-4">
+                                                <div className="bg-white/[0.02] rounded-xl p-4 border border-white/5">
+                                                    <div className="text-[8px] font-bold uppercase tracking-widest text-zinc-700 mb-1.5">Description</div>
+                                                    <p className="text-zinc-400 text-[12px] leading-relaxed line-clamp-3">{report.description}</p>
                                                 </div>
 
-                                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                                    <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 mb-2">AI Feedback</div>
-                                                    <p className="text-zinc-300 text-sm leading-relaxed">{report.ai_feedback}</p>
+                                                <div className="bg-emerald-500/[0.02] rounded-xl p-4 border border-emerald-500/5">
+                                                    <div className="text-[8px] font-bold uppercase tracking-widest text-emerald-900/40 mb-1.5">AI Feedback</div>
+                                                    <p className="text-zinc-500 text-[12px] leading-relaxed line-clamp-3 italic">{report.ai_feedback || 'No feedback provided.'}</p>
                                                 </div>
-
-                                                {report.file_urls && report.file_urls.length > 0 && (
-                                                    <div className="flex flex-wrap gap-2 pt-2">
-                                                        {report.file_urls.map((url, idx) => (
-                                                            <a
-                                                                key={idx}
-                                                                href={url}
-                                                                target="_blank"
-                                                                rel="noreferrer"
-                                                                className="flex items-center gap-2 bg-zinc-800 hover:bg-zinc-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
-                                                            >
-                                                                <FileText className="h-3 w-3" />
-                                                                File {idx + 1}
-                                                                <ExternalLink className="h-2 w-2 opacity-50" />
-                                                            </a>
-                                                        ))}
-                                                    </div>
-                                                )}
                                             </div>
+
+                                            {report.file_urls && report.file_urls.length > 0 && (
+                                                <div className="flex flex-wrap gap-2 pt-1">
+                                                    {report.file_urls.map((url, idx) => (
+                                                        <a
+                                                            key={idx}
+                                                            href={url}
+                                                            target="_blank"
+                                                            rel="noreferrer"
+                                                            className="flex items-center gap-1.5 bg-zinc-900 hover:bg-zinc-800 px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all border border-white/5"
+                                                        >
+                                                            <FileText className="h-3 w-3 text-zinc-500" />
+                                                            Asset {idx + 1}
+                                                        </a>
+                                                    ))}
+                                                </div>
+                                            )}
                                         </div>
 
-                                        <div className="md:w-64 space-y-4">
+                                        <div className="md:w-48 flex items-center">
                                             <button
                                                 onClick={() => setEditingReport(report)}
-                                                className="w-full btn-3d btn-3d-dark py-3 flex items-center justify-center gap-2"
+                                                className="w-full btn-3d btn-3d-dark py-2 text-[11px] flex items-center justify-center gap-2"
                                             >
                                                 <Edit3 className="h-3 w-3" />
-                                                Edit Detail
+                                                Edit Submission
                                             </button>
                                         </div>
                                     </div>
@@ -327,41 +322,45 @@ export default function StudentAdminDetail({ params }: { params: Promise<{ id: s
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setEditingReport(null)}
-                            className="absolute inset-0 bg-black/90 backdrop-blur-sm"
+                            className="absolute inset-0 bg-black/90 backdrop-blur-md"
                         />
                         <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.95, opacity: 0 }}
-                            className="relative w-full max-w-2xl glass-card p-8 md:p-12 bg-zinc-950 border-white/10"
+                            className="relative w-full max-w-xl glass-card p-8 bg-zinc-950 border-white/10 card-3d"
                         >
-                            <h2 className="text-3xl font-bold tracking-tighter mb-8 italic">Edit Submission</h2>
+                            <h2 className="text-2xl font-bold tracking-tighter mb-6">Edit Submission</h2>
 
-                            <form onSubmit={handleUpdateReport} className="space-y-6">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Title</label>
+                            <form onSubmit={handleUpdateReport} className="space-y-5">
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 ml-1">Title</label>
                                     <input
                                         type="text"
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-white/20 transition-all font-bold"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 outline-none focus:border-white/20 transition-all font-bold text-sm"
                                         value={editingReport.title}
                                         onChange={(e) => setEditingReport({ ...editingReport, title: e.target.value })}
                                     />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">ELO Awarded</label>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 ml-1">ELO Awarded</label>
                                         <input
                                             type="number"
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-white/20 transition-all font-black text-xl text-emerald-500"
-                                            value={editingReport.elo_awarded}
-                                            onChange={(e) => setEditingReport({ ...editingReport, elo_awarded: parseInt(e.target.value) || 0 })}
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-2.5 px-4 outline-none focus:border-white/20 transition-all font-bold text-lg text-white"
+                                            value={editingReport.elo_awarded === 0 ? '' : editingReport.elo_awarded}
+                                            placeholder="0"
+                                            onChange={(e) => {
+                                                const val = e.target.value === '' ? 0 : parseInt(e.target.value);
+                                                setEditingReport({ ...editingReport, elo_awarded: val });
+                                            }}
                                         />
                                     </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Status</label>
+                                    <div className="space-y-1.5">
+                                        <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 ml-1">Status</label>
                                         <select
-                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-4 outline-none focus:border-white/20 transition-all font-bold text-xs uppercase appearance-none"
+                                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 outline-none focus:border-white/20 transition-all font-bold text-[11px] uppercase appearance-none"
                                             value={editingReport.status}
                                             onChange={(e) => setEditingReport({ ...editingReport, status: e.target.value as any })}
                                         >
@@ -372,37 +371,37 @@ export default function StudentAdminDetail({ params }: { params: Promise<{ id: s
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Description</label>
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 ml-1">Description</label>
                                     <textarea
-                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 h-32 outline-none focus:border-white/20 transition-all text-sm font-medium resize-none"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 h-24 outline-none focus:border-white/20 transition-all text-[13px] font-medium resize-none"
                                         value={editingReport.description}
                                         onChange={(e) => setEditingReport({ ...editingReport, description: e.target.value })}
                                     />
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">AI Feedback</label>
+                                <div className="space-y-1.5">
+                                    <label className="text-[9px] font-bold uppercase tracking-widest text-zinc-600 ml-1">AI Feedback</label>
                                     <textarea
-                                        className="w-full bg-emerald-500/5 border border-emerald-500/10 rounded-xl py-3 px-4 h-32 outline-none focus:border-emerald-500/20 transition-all text-sm font-medium text-emerald-100 resize-none"
+                                        className="w-full bg-white/5 border border-white/10 rounded-xl py-3 px-4 h-24 outline-none focus:border-white/20 transition-all text-[13px] font-medium text-zinc-300 resize-none"
                                         value={editingReport.ai_feedback}
                                         onChange={(e) => setEditingReport({ ...editingReport, ai_feedback: e.target.value })}
                                     />
                                 </div>
 
-                                <div className="flex gap-4 pt-4">
+                                <div className="flex gap-3 pt-2">
                                     <button
                                         type="button"
                                         onClick={() => setEditingReport(null)}
-                                        className="flex-1 py-4 text-xs font-bold uppercase tracking-widest text-zinc-600 hover:text-white transition-colors"
+                                        className="flex-1 py-3 text-[11px] font-bold uppercase tracking-widest text-zinc-600 hover:text-white transition-colors"
                                     >
-                                        Discard
+                                        Cancel
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 btn-3d btn-3d-primary py-4 flex items-center justify-center gap-2"
+                                        className="flex-1 btn-3d btn-3d-primary py-3 flex items-center justify-center gap-2 text-[12px]"
                                     >
-                                        {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                                        {isSaving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
                                         Save Changes
                                     </button>
                                 </div>

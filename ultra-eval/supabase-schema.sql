@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS reports (
   file_urls TEXT[],
   elo_awarded INTEGER NOT NULL,
   ai_feedback TEXT,
+  analysis_parts TEXT[],
+  category_score JSONB,
   status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'graded', 'rejected')),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   graded_at TIMESTAMP WITH TIME ZONE
